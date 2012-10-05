@@ -1,0 +1,1 @@
+(cd client && ./build.sh)
