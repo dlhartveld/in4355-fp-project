@@ -21,6 +21,11 @@
 			<version>2.10.0-M7</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>1.14</version>
+		</dependency>
 	</dependencies>
 
 	<build>
