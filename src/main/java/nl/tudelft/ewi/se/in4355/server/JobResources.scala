@@ -7,23 +7,23 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Response
 
-@Path("resources/jobs")
+@Path("jobs")
 class JobResources {
-  
-  @POST 
+
+  @POST
   @Path("code")
   @Produces(Array("text/javascript"))
-  def getNextJob() : Response = {
+  def getNextJob(): Response = {
     var counter = Counter
     counter.counter = counter.counter + 1;
     println(counter.counter);
     return Response.ok.entity("setTimeout(function() { alert('count = " + counter.counter + "'); }, 1000);").build;
   }
-  
+
   @GET
   @Path("data")
   @Produces(Array("application/json"))
-  def getJobInput() : Response = {
+  def getJobInput(): Response = {
     return Response.ok.entity("").build;
   }
 
