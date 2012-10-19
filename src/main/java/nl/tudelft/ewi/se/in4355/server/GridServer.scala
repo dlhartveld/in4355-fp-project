@@ -4,23 +4,36 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.webapp.WebAppContext
 import java.io.File
 
-object GridServer {
+class GridServer(port: Int) {
 
-  val PORT = 10000;
+  var server = configuredServer
 
-  def main(args: Array[String]) = {
-
-    var server = new Server(PORT);
-    server.setHandler(buildWebAppContext);
-    server.start;
-
-    server.join;
+  def start {
+    server.start
   }
 
-  def buildWebAppContext = {
-    var webAppContext = new WebAppContext();
-    webAppContext.setWar(new File("src/main/webapp/").getAbsolutePath());
-    webAppContext;
+  def stop {
+    server.stop
+  }
+
+  def join {
+    server.join
+  }
+
+  private def configuredServer: Server = {
+    val server = new Server(port)
+    server.setHandler(webAppContext)
+    server
+  }
+
+  private def webAppContext: WebAppContext = {
+    var context = new WebAppContext
+    context.setWar(webAppPath)
+    context
+  }
+
+  private def webAppPath = {
+    new File("src/main/webapp").getAbsolutePath()
   }
 
 }
