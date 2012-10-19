@@ -10,6 +10,10 @@
 			<param-name>com.sun.jersey.config.property.packages</param-name>
 			<param-value>nl.tudelft.ewi.se.in4355.server</param-value>
 		</init-param>
+		<init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
@@ -25,4 +29,5 @@
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
+	
 </web-app>

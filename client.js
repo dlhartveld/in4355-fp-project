@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
 	var running = false;
+	var finished = true;
+	
 	var startBtn = $("#start");
 	var stopBtn = $("#stop");
 	
@@ -21,25 +23,52 @@ $(document).ready(function() {
 		}
 	});
 	
+	setInterval(function() { run(); }, 1);
 	
-	function start() {
+	function run() {
+		if (running && finished) {
+			finished = false;
+			start();
+		}
+	}
+	
+	function fetch(callback) {
 		$.ajax({
-			url: "http://localhost:8080/jobs/code",
-			type: "post",
-			dataType: "text",
-			success: function(data) {
-				eval(data);
+			url: 'http://localhost:10000/resources/resources/jobs/input', 
+			type: 'POST', 
+			dataType: 'json', 
+			success: function(data) { 
+				$(".data").text(JSON.stringify(data));
+				callback.call(this, data);
 			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				alert(jqXHR.responseText);
+			error: function(x) {
+				if (x.status == 200) {
+					callback.call(this, JSON.parse(x.responseText));
+					return;
+				}
 			}
 		});
 	}
 	
-	function startNextJob() {
-		if (running) {
-			start();
-		}
+	function push(results) {
+		$.ajax({
+			url: 'http://localhost:10000/resources/resources/jobs/output', 
+			type: 'POST', 
+			data: results,
+			success: function(data) { 
+				finished = true;
+			},
+			error: function(x) {
+				if (x.status == 200) {
+					callback.call(this, JSON.parse(x.responseText));
+					return;
+				}
+			}
+		});
+	}
+	
+	function start() {
+		eval("fetch(function(data) { push(data); });");
 	}
 	
 });
