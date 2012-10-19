@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<!-- Bootstrap -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">	
 	<style type="text/css">
       body {
         padding-top: 60px;
@@ -14,6 +14,7 @@
       }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/css.css" rel="stylesheet">
 </head>
 
 <body>
@@ -36,9 +37,17 @@
 		      	
 		      	<div class="start-button pagination-centered">
 		      		<p>
-						<button class="btn btn-large btn-primary" style="font-size:56px;padding:50px 80px;margin:100px;" type="button">Start</button>
+						<button id="start-button" class="btn btn-large btn-primary" style="font-size:56px;padding:50px 80px;margin:100px;" type="button">start</button>
 					</p>
 		      	</div>
+		      	
+		      	<div id="unicorn" class="unicorn" style="width:100%;">
+		      		<div id="animated_div"></div>
+		      	</div>
+		      	<div id="progress-bar" class="progress progress-danger progress-striped">
+					<div class="bar" style="width: 100%"></div>
+				</div>
+		      	
 			</div>
 			<div class="span4">
 				<div class="hero-unit">
@@ -55,8 +64,9 @@
 		
 	</div>
 	
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script src="bootstrap/js/bootstrap.js"></script>	 
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.js"></script>
+	<script src="fay/script.js"></script>	 
 </body>
 
 </html>

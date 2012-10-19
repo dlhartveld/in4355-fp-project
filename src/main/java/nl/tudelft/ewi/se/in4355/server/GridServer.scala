@@ -1,39 +1,27 @@
-package nl.tudelft.ewi.se.in4355.server
+package nl.tudelft.ewi.se.in4355.server;
 
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.webapp.WebAppContext
 import java.io.File
 
-class GridServer(port: Int) {
+object GridServer {
 
-  var server = configuredServer
+  val PORT = 10000;
 
-  def start {
-    server.start
+  def main(args: Array[String]) = {
+
+    var server = new Server(PORT);
+    server.setHandler(buildWebAppContext);
+    server.start;
+
+    server.join;
+
   }
 
-  def stop {
-    server.stop
-  }
-
-  def join {
-    server.join
-  }
-
-  private def configuredServer: Server = {
-    val server = new Server(port)
-    server.setHandler(webAppContext)
-    server
-  }
-
-  private def webAppContext: WebAppContext = {
-    var context = new WebAppContext
-    context.setWar(webAppPath)
-    context
-  }
-
-  private def webAppPath = {
-    new File("src/main/webapp").getAbsolutePath()
+  def buildWebAppContext = {
+    var webAppContext = new WebAppContext();
+    webAppContext.setWar(new File("src/main/webapp/").getAbsolutePath());
+    webAppContext;
   }
 
 }
