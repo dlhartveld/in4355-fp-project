@@ -7,7 +7,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Response
 
-@Path("jobs")
+@Path("resources/jobs")
 class JobResources {
   
   @POST 
@@ -26,13 +26,12 @@ class JobResources {
   def getJobInput() : Response = {
     return Response.ok.entity("").build;
   }
-  
+
   @POST
   @Path("data")
   @Consumes(Array("application/json"))
-  def processJobResults(result: String) : Response = {
-    // Implement this.
+  def processJobResults(result: String): Response = {
     return Response.ok.build;
   }
-    
+
 }
