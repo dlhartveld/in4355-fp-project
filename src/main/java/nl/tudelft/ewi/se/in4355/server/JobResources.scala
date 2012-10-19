@@ -3,21 +3,21 @@ package nl.tudelft.ewi.se.in4355.server
 import javax.ws.rs._
 import javax.ws.rs.core.Response
 
-@Path("jobs")
+@Path("resources/jobs")
 class JobResources {
-  
-  @GET 
+
+  @GET
   @Produces(Array("application/json"))
-  def getNextJob() : Response = {
+  def getNextJob(): Response = {
     // Implement this.
     return Response.ok.entity("[{\"Naam\": \"JSON\"}]").build;
   }
-  
+
   @POST
   @Consumes(Array("application/json"))
-  def processJobResults(result: String) : Response = {
+  def processJobResults(result: String): Response = {
     // Implement this.
     return Response.ok.build;
   }
-    
+
 }
