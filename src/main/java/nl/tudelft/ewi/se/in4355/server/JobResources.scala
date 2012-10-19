@@ -8,23 +8,25 @@ import javax.ws.rs.core.Response
 
 @Path("jobs")
 class JobResources {
-  
+
   var counter = Counter
-  
-  @POST 
+
+  val jobSource = new JobSource
+
+  @POST
   @Path("code")
   @Produces(Array("text/javascript"))
-  def getNextJob() : Response = {
+  def getNextJob(): Response = {
     return Response.ok.entity("fetch(function(data) { push(data); });").build;
   }
-  
+
   @POST
   @Path("input")
   @Produces(Array("application/json"))
-  def getJobInput() : Response = {
+  def getJobInput(): Response = {
     return Response.ok.entity(counter.counter).build;
   }
-  
+
   @POST
   @Path("output")
   @Consumes(Array("text/plain"))
@@ -32,5 +34,5 @@ class JobResources {
     counter.counter = counter.counter + 1;
     return Response.ok.build;
   }
-  
+
 }
