@@ -1,4 +1,4 @@
-package test
+package nl.tudelft.ewi.se.in4355.server
 
 import javax.ws.rs._
 import javax.ws.rs.core.Response

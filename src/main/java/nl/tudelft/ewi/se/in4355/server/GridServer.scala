@@ -15,7 +15,6 @@ object GridServer {
     server.start;
 
     server.join;
-
   }
 
   def buildWebAppContext = {
