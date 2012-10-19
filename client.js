@@ -34,7 +34,7 @@ $(document).ready(function() {
 	
 	function fetch(callback) {
 		$.ajax({
-			url: 'http://localhost:10000/resources/resources/jobs/input', 
+			url: 'http://localhost:10001/resources/jobs/input', 
 			type: 'POST', 
 			dataType: 'json', 
 			success: function(data) { 
@@ -52,11 +52,11 @@ $(document).ready(function() {
 	
 	function push(results) {
 		$.ajax({
-			url: 'http://localhost:10000/resources/resources/jobs/output', 
+			url: 'http://localhost:10001/resources/jobs/output', 
 			type: 'POST', 
 			data: results,
 			success: function(data) { 
-				finished = true;
+				// Do nothing.
 			},
 			error: function(x) {
 				if (x.status == 200) {
@@ -68,7 +68,18 @@ $(document).ready(function() {
 	}
 	
 	function start() {
-		eval("fetch(function(data) { push(data); });");
+		$.ajax({
+			url: 'http://localhost:10001/resources/jobs/code', 
+			type: 'POST', 
+			dataType: 'text', 
+			success: function(data) { 
+				eval(data);
+				finished = true;
+			},
+			error: function(x) {
+				alert(x.responseText);
+			}
+		});
 	}
 	
 });

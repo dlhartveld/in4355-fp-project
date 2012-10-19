@@ -6,7 +6,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Response
 
-@Path("resources/jobs")
+@Path("jobs")
 class JobResources {
   
   var counter = Counter
@@ -15,20 +15,7 @@ class JobResources {
   @Path("code")
   @Produces(Array("text/javascript"))
   def getNextJob() : Response = {
-    val builder = new StringBuilder();
-    builder.append("	$.ajax({ ")
-    builder.append("		url: 'http://localhost:10000/resources/resources/jobs/input', ")
-    builder.append("		type: 'post', dataType: 'json', ")
-    builder.append("		success: function(data) { ")
-    builder.append("			alert(data.val); ")
-    builder.append("			startNextJob(); ")
-    builder.append("		}, ")
-    builder.append("		error: function(jqXHR, textStatus, errorThrown) { ")
-    builder.append("			alert(jqXHR.responseText); ")
-    builder.append("		} ")
-    builder.append("	}); ")
-    
-    return Response.ok.entity(builder.toString).build;
+    return Response.ok.entity("fetch(function(data) { push(data); });").build;
   }
   
   @POST
@@ -37,7 +24,7 @@ class JobResources {
   def getJobInput() : Response = {
     return Response.ok.entity(counter.counter).build;
   }
-
+  
   @POST
   @Path("output")
   @Consumes(Array("text/plain"))

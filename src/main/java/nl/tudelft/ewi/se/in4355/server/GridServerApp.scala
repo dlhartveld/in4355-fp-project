@@ -9,7 +9,7 @@ object GridServerApp {
 
   val LOG = Logger("GridServer")
 
-  val PORT = 10000;
+  val PORT = 10001;
 
   val server = new GridServer(PORT)
 
