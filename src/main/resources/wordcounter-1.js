@@ -1,9 +1,9 @@
 fetch(function(data) {
 	var mapping = new Index();
-	for (var i = 0; i < data.length; i++) {
-		mapping = processLine(mapping, data[i]);
+	for (var i = 0; i < data.sentences.length; i++) {
+		mapping = processLine(mapping, data.sentences[i]);
 	}
-	push(mapping.words);
+	push(new Result(data.id, mapping.words));
 });
 
 function processLine(oldIndex, line) {
@@ -48,4 +48,9 @@ function add(index, count) {
 		index.words.push(count);
 	}
 	return index;
+}
+
+function Result(id, wordCounts) {
+	this.id = id;
+	this.wordCounts = wordCounts;
 }

@@ -1,7 +1,8 @@
 $(document).ready(function() {
 
 	var running = false;
-	var finished = true;
+	var packageProcessed = true;
+	var allDataProcessed = false;
 	
 	var startBtn = $("#start");
 	var stopBtn = $("#stop");
@@ -9,7 +10,8 @@ $(document).ready(function() {
 	startBtn.click(function() {
 		if (!running) {
 			running = true;
-			finished = true; 
+			packageProcessed = true;
+			allDataProcessed = false; 
 			startBtn.attr("disabled", "disabled");
 			stopBtn.removeAttr("disabled");
 		}
@@ -19,12 +21,20 @@ $(document).ready(function() {
 		stop();
 	});
 	
-	setInterval(function() { run(); }, 1);
+	setInterval(function() { run(); }, 50);
 	
 	function run() {
-		if (running && finished) {
-			finished = false;
-			start();
+		if (allDataProcessed && running) {
+			finished = true;
+			stop();
+			return;
+		}
+		
+		if (running) {
+			if (packageProcessed) {
+				packageProcessed = false;
+				start();
+			}
 		}
 	}
 	
@@ -34,12 +44,16 @@ $(document).ready(function() {
 			type: 'POST', 
 			dataType: 'json', 
 			success: function(data) { 
-				$("#input").text(data);
+				$("#input").text("Received package: " + data.id);
 				callback.call(this, data);
 			},
 			error: function(x) {
 				if (x.status == 200) {
 					callback.call(this, JSON.parse(x.responseText));
+					return;
+				}
+				else if (x.status == 204) {
+					allDataProcessed = true;
 					return;
 				}
 				stop();
@@ -49,20 +63,18 @@ $(document).ready(function() {
 	
 	function push(results) {
 		var serializedData = JSON.stringify(results);
-		$("#output").text(serializedData);
+		$("#output").text(results.id + " -> " + results.wordCounts.length + " distinct words...");
 		$.ajax({
 			url: '/resources/jobs/output', 
 			type: 'POST', 
 			contentType: 'application/json',
+			dataType: 'json', 
 			data: serializedData,
 			success: function(data) { 
-				finished = true;
+				packageProcessed = true;
+				allDataProcessed = !data.hasMoreData;
 			},
 			error: function(x) {
-				if (x.status == 200) {
-					callback.call(this, JSON.parse(x.responseText));
-					return;
-				}
 				stop();
 			}
 		});
@@ -74,9 +86,19 @@ $(document).ready(function() {
 			type: 'POST', 
 			dataType: 'text', 
 			success: function(data) { 
+				if (data.length == 0) {
+					allDataProcessed = true;
+					finished = true;
+					return;
+				}
 				eval(data);
 			},
 			error: function(x) {
+				if (x.status == 204) {
+					allDataProcessed = true;
+					finished = true;
+					return;
+				}
 				alert(x.responseText);
 				stop();
 			}

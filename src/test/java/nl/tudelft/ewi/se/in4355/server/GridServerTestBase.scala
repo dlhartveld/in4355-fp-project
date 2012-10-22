@@ -8,6 +8,9 @@ import org.apache.http.HttpResponse
 import org.apache.http.HttpRequest
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.StringEntity
+import org.apache.http.HttpStatus
 
 class GridServerTestBase extends JUnitSuite {
 
@@ -37,11 +40,26 @@ class GridServerTestBase extends JUnitSuite {
   private val client = new DefaultHttpClient
 
   def get(path: String): HttpResponse = {
-    client.execute(httpGetOfUri(url + path))
+    okOrFail(client.execute(httpGetOfUri(url + path)))
   }
 
-  def httpGetOfUri(uri: String): HttpGet = {
+  def post(path: String, contents: String): HttpResponse = {
+    okOrFail(client.execute(newHttpPost(url + path, contents)))
+  }
+
+  private def okOrFail(response: HttpResponse): HttpResponse = response.getStatusLine().getStatusCode() match {
+    case HttpStatus.SC_OK => response
+    case _ => fail("Got client response: " + response)
+  }
+
+  private def httpGetOfUri(uri: String): HttpGet = {
     new HttpGet(uri)
+  }
+
+  private def newHttpPost(uri: String, contents: String): HttpPost = {
+    val post = new HttpPost(uri)
+    post.setEntity(new StringEntity(contents))
+    post
   }
 
 }
