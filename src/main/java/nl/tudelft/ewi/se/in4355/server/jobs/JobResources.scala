@@ -1,10 +1,12 @@
-package nl.tudelft.ewi.se.in4355.server
+package nl.tudelft.ewi.se.in4355.server.jobs
 
 import javax.ws.rs.Consumes
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Response
+import scala.beans.BeanInfo
+import nl.tudelft.ewi.se.in4355.server.Counter
 
 @Path("jobs")
 class JobResources {
@@ -24,7 +26,7 @@ class JobResources {
   @Path("input")
   @Produces(Array("application/json"))
   def getJobInput(): Response = {
-    return Response.ok.entity(counter.counter).build;
+    return Response.ok.entity(jobSource.next).build;
   }
 
   @POST

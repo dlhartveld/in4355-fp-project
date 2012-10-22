@@ -1,9 +1,9 @@
-package nl.tudelft.ewi.se.in4355.server
+package nl.tudelft.ewi.se.in4355.server.jobs
 
 import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 
-class OtherTest extends JUnitSuite {
+class JobResourcesTest extends JUnitSuite {
 
   val jobs = new JobResources
 
