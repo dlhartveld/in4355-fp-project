@@ -1,8 +1,5 @@
 package nl.tudelft.ewi.se.in4355.server
 
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.webapp.WebAppContext
-import java.io.File
 import grizzled.slf4j.Logger
 
 object GridServerApp {
