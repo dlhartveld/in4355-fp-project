@@ -4,7 +4,6 @@ import org.apache.http.util.EntityUtils
 import org.junit.Test
 import nl.tudelft.ewi.se.in4355.server.GridServerTestBase
 import org.apache.http.HttpEntity
-import sun.org.mozilla.javascript.ast.ForLoop
 
 class JobResourcesServerTest extends GridServerTestBase {
 
