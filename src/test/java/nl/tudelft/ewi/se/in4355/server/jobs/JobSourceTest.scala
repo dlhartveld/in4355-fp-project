@@ -9,13 +9,13 @@ class JobSourceTest extends JUnitSuite {
 
     val js = new JobSource
 
-    //val firstFive = js.next
-    //val secondFive = js.next
-    //
-    //assert(firstFive.length == 5)
-    //assert(secondFive.length == 5)
-    //
-    //assert(firstFive != secondFive)
+    val firstFive = js.nextPackage.sentences
+    val secondFive = js.nextPackage.sentences
+
+    assert(firstFive.size == 5)
+    assert(secondFive.size == 5)
+
+    assert(firstFive != secondFive)
 
   }
 
