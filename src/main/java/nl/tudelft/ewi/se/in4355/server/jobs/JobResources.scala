@@ -51,7 +51,7 @@ class JobResources {
     val listType : Type = new TypeToken[WordCount]() {}.getType()
     val results : WordCount = (deserializer.fromJson(input, listType))
     jobSource.markDone(results.id);
-    println(results.wordCounts.size);
+    println(deserializer.toJson(results));
     return Response.ok.entity("{ \"hasMoreData\": " + jobSource.hasNext + " }").build;
   }
   
