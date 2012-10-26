@@ -22,8 +22,6 @@ class WordCountJob(val inputFile: String) {
     tracker.submitTask(mapTask);
 
     while (mapTask.hasNext) {}
-
-    println(results);
   }
 
   private def read(fileName: String) = {
