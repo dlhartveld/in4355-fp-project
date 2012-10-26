@@ -5,7 +5,7 @@ import org.junit.Test
 import nl.tudelft.ewi.se.in4355.server.GridServerTestBase
 import org.apache.http.HttpEntity
 
-class JobResourcesServerTest extends GridServerTestBase {
+class JobsResourceServerTest extends GridServerTestBase {
 
   @Test def test {
 

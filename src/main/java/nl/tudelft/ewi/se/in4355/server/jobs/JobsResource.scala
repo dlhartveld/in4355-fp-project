@@ -20,14 +20,24 @@ import javax.ws.rs.core.Response.Status
 @Path("jobs")
 class JobResources {
 
-  val tracker = TaskTracker;
+  val taskTracker = TaskTracker;
+  val jobTracker = JobTracker
+
+  @POST
+  @Path("new")
+  @Consumes(Array("text/javascript"))
+  @Produces(Array("application/json"))
+  def createJob(code: String) = {
+    val id = jobTracker.addNewJob(code)
+    Response.ok("{\"job\"" + id + "}").build
+  }
 
   @POST
   @Path("")
   @Produces(Array("text/plain"))
   def getNextTaskId(): Response = {
-    if (tracker.hasTasks) {
-      return Response.ok.entity(tracker.getCurrentTaskId.toString).build;
+    if (taskTracker.hasTasks) {
+      return Response.ok.entity(taskTracker.getCurrentTaskId.toString).build;
     }
     return Response.status(Status.NO_CONTENT).build();
   }
@@ -36,8 +46,8 @@ class JobResources {
   @Path("{id}/code")
   @Produces(Array("text/javascript"))
   def getNextJob(@PathParam("id") taskId: Int): Response = {
-    if (tracker.hasTasks) {
-      return Response.ok.entity(tracker.getTask(taskId).code).build;
+    if (taskTracker.hasTasks) {
+      return Response.ok.entity(taskTracker.getTask(taskId).code).build;
     }
     return Response.status(Status.NO_CONTENT).build();
   }
@@ -46,7 +56,7 @@ class JobResources {
   @Path("{id}/input")
   @Produces(Array("application/json"))
   def getJobInput(@PathParam("id") taskId: Int): Response = {
-    val data = tracker.getTask(taskId).nextBatch;
+    val data = taskTracker.getTask(taskId).nextBatch;
     if (data != null) {
       val serializer = new Gson;
       return Response.ok.entity(serializer.toJson(data)).build;
@@ -62,9 +72,9 @@ class JobResources {
     val deserializer = new Gson;
     val listType: Type = new TypeToken[Output[_]]() {}.getType()
     val results: Output[_] = (deserializer.fromJson(input, listType))
-    tracker.getTask(taskId).markDone(results.id, input);
+    taskTracker.getTask(taskId).markDone(results.id, input);
 
-    return Response.ok.entity("{ \"hasMoreData\": " + tracker.hasMoreData(taskId) + " }").build;
+    return Response.ok.entity("{ \"hasMoreData\": " + taskTracker.hasMoreData(taskId) + " }").build;
   }
 
   // TODO: Can this be done more efficiently?
