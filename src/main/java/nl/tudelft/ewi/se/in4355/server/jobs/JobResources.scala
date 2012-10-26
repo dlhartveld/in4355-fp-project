@@ -17,15 +17,14 @@ import java.util.ArrayList
 @Path("jobs")
 class JobResources {
 
-  val jobSource = new JobSource
+  val tracker = TaskTracker;
   
   @POST 
   @Path("code")
   @Produces(Array("text/javascript"))
   def getNextJob(): Response = {
-    if (jobSource.hasNext) {
-    	val code = readFile("/wordcounter-1.js");
-    	return Response.ok.entity(code).build;
+    if (tracker.hasTasks) {
+    	return Response.ok.entity(tracker.getCurrentTask.code).build;
     }
     return Response.status(Status.NO_CONTENT).build();
   }
@@ -34,8 +33,8 @@ class JobResources {
   @Path("input")
   @Produces(Array("application/json"))
   def getJobInput(): Response = {
-    val data = jobSource.nextPackage;
-    if (!data.isEmpty) {
+    val data = tracker.getCurrentTask.nextBatch;
+    if (data != null) {
     	val serializer = new Gson;
     	return Response.ok.entity(serializer.toJson(data)).build;
     }
@@ -48,11 +47,11 @@ class JobResources {
   @Consumes(Array("application/json"))
   def processJobResults(input: String): Response = {
     val deserializer = new Gson;
-    val listType : Type = new TypeToken[WordCount]() {}.getType()
-    val results : WordCount = (deserializer.fromJson(input, listType))
-    jobSource.markDone(results.id);
+    val listType : Type = new TypeToken[Output[_]]() {}.getType()
+    val results : Output[_] = (deserializer.fromJson(input, listType))
+    tracker.getCurrentTask.markDone(results.id, input);
     println(deserializer.toJson(results));
-    return Response.ok.entity("{ \"hasMoreData\": " + jobSource.hasNext + " }").build;
+    return Response.ok.entity("{ \"hasMoreData\": " + tracker.getCurrentTask.hasNext + " }").build;
   }
   
   // TODO: Can this be done more efficiently?

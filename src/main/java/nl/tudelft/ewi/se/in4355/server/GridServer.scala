@@ -3,6 +3,7 @@ package nl.tudelft.ewi.se.in4355.server
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.webapp.WebAppContext
 import java.io.File
+import nl.tudelft.ewi.se.in4355.server.jobs.WordCounterJob
 
 class GridServer(port: Int) {
 

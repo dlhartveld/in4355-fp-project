@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordCount {
+	
 	public final int id;
 	public final List<Count> wordCounts;
 	
@@ -15,4 +16,5 @@ public class WordCount {
 		this.id = id;
 		this.wordCounts = wordCounts;
 	}
+	
 }
