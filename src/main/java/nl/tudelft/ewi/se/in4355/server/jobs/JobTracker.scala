@@ -22,12 +22,12 @@ object JobTracker {
 
     def next = {
       synchronized {
+        val result = counter
         counter = counter + 1
-        counter
+        result
       }
     }
 
   }
 
 }
-

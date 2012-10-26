@@ -22,11 +22,10 @@ class JobsResource {
 
   @POST
   @Path("new")
-  @Consumes(Array("text/javascript"))
   @Produces(Array("application/json"))
   def createJob(code: String) = {
     val id = jobTracker.addNewJob(code)
-    Response.ok("{\"job\"" + id + "}").build
+    Response.ok("{\"job\": " + id + "}").build
   }
 
   @POST

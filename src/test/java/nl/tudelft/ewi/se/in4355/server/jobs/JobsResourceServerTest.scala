@@ -4,25 +4,34 @@ import org.apache.http.util.EntityUtils
 import org.junit.Test
 import nl.tudelft.ewi.se.in4355.server.GridServerTestBase
 import org.apache.http.HttpEntity
+import grizzled.slf4j.Logger
+import scala.util.parsing.json.JSON
 
 class JobsResourceServerTest extends GridServerTestBase {
 
-  @Test def test {
+  val LOG = Logger(classOf[JobsResourceServerTest])
 
-    var i: Int = 0
+  @Test def testThatPostingNewJobsWorks {
+    val response = createNewJob("Code for my first job")
 
-    //    while (i < 100) {
-    var response = post("/resources/jobs/input", "").getEntity()
+    println(response)
 
-    println("Server response:")
-    println
-    println(EntityUtils.toString(response))
-    println
-    println
+    val job = response.get("job").get.asInstanceOf[Double]
 
-    i = i + 1
-    //    }
+    assert(job == 0)
+  }
 
+  private def createNewJob(code: String) = {
+    val response = post("/resources/jobs/new", code)
+    val contents = EntityUtils.toString(response.getEntity())
+
+    LOG.debug("Retrieved entity: " + contents)
+
+    parse(contents)
+  }
+
+  private def parse(json: String) = {
+    JSON.parseFull(json).get.asInstanceOf[Map[String, Any]]
   }
 
 }
