@@ -16,11 +16,11 @@ object GridServerApp {
 
     LOG.info("Starting server on port: " + PORT + " ...");
     server.start;
+    
+    new WordCounterJob("loremipsum.txt").submit;
 
     LOG.info("Server started.");
     server.join;
-    
-    new WordCounterJob("loremipsum.txt").submit;
   }
 
 }

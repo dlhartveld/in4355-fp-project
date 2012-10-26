@@ -1,5 +1,7 @@
 package nl.tudelft.ewi.se.in4355.server.jobs
 
+import scala.collection.JavaConversions
+
 import com.google.gson.reflect.TypeToken
 
 class WordCounterJob(val inputFile: String) {
@@ -10,7 +12,8 @@ class WordCounterJob(val inputFile: String) {
     
     var results = List[WordCount]();
     
-    val mapTask = new MapTask[String, WordCount](read("wordcounter-1.js"), readLines(inputFile), new TypeToken[WordCount]() {}) {
+    val data = readLines(inputFile).grouped(5).map((x) => JavaConversions.seqAsJavaList(x)).toList;
+    val mapTask = new MapTask[java.util.List[String], WordCount](read("wordcounter-1.js"), data, new TypeToken[WordCount]() {}) {
       def handleAnswer(result: WordCount) {
         results.+:(result);
       }
@@ -23,7 +26,7 @@ class WordCounterJob(val inputFile: String) {
   }
   
   private def read(fileName: String) = {
-    readLines(fileName).foldLeft("")((x, y) => (x.+(y)));
+    readLines(fileName).foldLeft("")((x, y) => (x.+("\n" + y)));
   }
   
   private def readLines(fileName: String) = {

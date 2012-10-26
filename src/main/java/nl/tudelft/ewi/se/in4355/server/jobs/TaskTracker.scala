@@ -11,7 +11,7 @@ object TaskTracker {
     tasks = tasks.+:(task);
   }
   
-  def hasTasks = tasks.isEmpty;
+  def hasTasks = !tasks.isEmpty;
   
   def getCurrentTask(): Task[_, _] = {
     while (!tasks.isEmpty) {
