@@ -1,52 +1,61 @@
 package nl.tudelft.ewi.se.in4355.server.jobs
 
-import java.util.concurrent.Executor
-import java.util.concurrent.ScheduledThreadPoolExecutor
+import scala.collection.mutable.LinkedHashMap
 
 object TaskTracker {
 
-  private var tasks = List[Task[_, _]]();
-  private var pointer = 0;
+  private var tasks = LinkedHashMap[Int, Task[_, _]]();
+  private var counter = 0;
 
   def submitTask(task: Task[_, _]) {
     this.synchronized {
-      tasks = tasks.+:(task);
+      clearDoneJobs();
+      tasks = tasks += (counter -> task);
+      counter += 1;
     }
   }
 
   def hasTasks: Boolean = {
     this.synchronized {
+      clearDoneJobs();
       return !tasks.isEmpty;
     }
   }
 
   def hasMoreData(taskId: Int): Boolean = {
-    this.synchronized {
-      if (pointer > taskId) {
-        return false;
-      }
-      return tasks(taskId - pointer).hasNext
+    val task = getTask(taskId);
+    if (task != null) {
+      return task.hasNext;
     }
+    return false;
   }
 
   def getTask(taskId: Int): Task[_, _] = {
     this.synchronized {
-      return tasks(taskId - pointer);
+      clearDoneJobs();
+      try {
+        return tasks(taskId);
+      } catch {
+        case nsee: NoSuchElementException => return null;
+      }
     }
   }
 
   def getCurrentTaskId(): Int = {
     this.synchronized {
-      while (!tasks.isEmpty) {
-        val task = tasks(0);
-        if (!task.hasNext) {
-          tasks = tasks.drop(1);
-          pointer += 1;
-        } else {
-          return pointer;
+      clearDoneJobs();
+      return tasks.keySet.iterator.next;
+    }
+  }
+
+  private def clearDoneJobs() {
+    this.synchronized {
+      for (i <- tasks.keySet) {
+        val task = tasks(i);
+        if (task != null && !task.hasNext) {
+          tasks -= i;
         }
       }
-      return -1;
     }
   }
 

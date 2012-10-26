@@ -1,12 +1,11 @@
 $(document).ready(function() {
 
-	var running = false;
-	var packageProcessed = true;
-	var allDataProcessed = false;
-	
 	var startBtn = $("#start");
 	var stopBtn = $("#stop");
+
+	var currentTask = "";
 	var taskId = -1;
+	var state = "stopped";
 	
 	startBtn.click(function() {
 		start();
@@ -19,20 +18,24 @@ $(document).ready(function() {
 	setInterval(function() { run(); }, 50);
 	
 	function run() {
-		if (allDataProcessed && running) {
-			finished = true;
-			stop();
-			return;
-		}
-		
-		if (running) {
-			if (packageProcessed) {
-				packageProcessed = false;
-				pollNextTask(function(id) {
+		if (state == "poll") {
+			state = "polling";
+			pollNextTask(function(id) {
+				if (id != "" && id >= 0) {
 					taskId = id;
 					pullCode(id);
-				});
-			}
+				}
+				else {
+					state = "poll";
+				}
+			});
+		}
+		else if (state == "finished-package" || state == "ready-to-run") {
+			state = "executing";
+			eval(currentTask);
+		}
+		else if (state == "stop") {
+			stop();
 		}
 	}
 	
@@ -42,7 +45,7 @@ $(document).ready(function() {
 			type: 'POST', 
 			dataType: 'json', 
 			success: function(data) { 
-				$("#input").text("Received package: " + data.id);
+				$("#input").text("Received package: (" + taskId + ", " + data.id + ")");
 				callback.call(this, data);
 			},
 			error: function(x) {
@@ -51,17 +54,17 @@ $(document).ready(function() {
 					return;
 				}
 				else if (x.status == 204) {
-					allDataProcessed = true;
+					state = "poll";
 					return;
 				}
-				stop();
+				state = "stop";
 			}
 		});
 	}
 	
 	function push(results) {
 		var serializedData = JSON.stringify(results);
-		$("#output").text(results.id + " -> " + results.wordCounts.length + " distinct words...");
+		$("#output").text(taskId + ": " + results.id + " -> " + results.wordCounts.length + " distinct words...");
 		$.ajax({
 			url: '/resources/jobs/' + taskId + '/output', 
 			type: 'POST', 
@@ -69,11 +72,15 @@ $(document).ready(function() {
 			dataType: 'json', 
 			data: serializedData,
 			success: function(data) { 
-				packageProcessed = true;
-				allDataProcessed = !data.hasMoreData;
+				if (data.hasMoreData) {
+					state = "finished-package";
+				}
+				else {
+					state = "poll";
+				}
 			},
 			error: function(x) {
-				stop();
+				state = "stop";
 			}
 		});
 	}
@@ -88,7 +95,7 @@ $(document).ready(function() {
 			},
 			error: function(x) {
 				$("#output").text(x.responseText);
-				stop();
+				state = "stop";
 			}
 		});
 	}
@@ -100,37 +107,33 @@ $(document).ready(function() {
 			dataType: 'text', 
 			success: function(data) { 
 				if (data.length == 0) {
-					allDataProcessed = true;
-					finished = true;
+					state = "poll";
 					return;
 				}
-				eval(data);
+				currentTask = data;
+				state = "ready-to-run";
 			},
 			error: function(x) {
 				if (x.status == 204) {
-					allDataProcessed = true;
-					finished = true;
+					state = "poll";
 					return;
 				}
 				$("#output").text(x.responseText);
-				stop();
 			}
 		});
 	}
 	
 	function start() {
-		if (!running) {
-			running = true;
-			packageProcessed = true;
-			allDataProcessed = false; 
+		if (state == "stopped") {
+			state = "poll";
 			startBtn.attr("disabled", "disabled");
 			stopBtn.removeAttr("disabled");
 		}
 	}
 	
 	function stop() {
-		if (running) {
-			running = false;
+		if (state != "stopped") {
+			state = "stopped";
 			stopBtn.attr("disabled", "disabled");
 			startBtn.removeAttr("disabled");
 		}
