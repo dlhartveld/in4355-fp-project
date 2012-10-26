@@ -1,7 +1,7 @@
 fetch(function(data) {
 	var mapping = new Index();
-	for (var i = 0; i < data.sentences.length; i++) {
-		mapping = processLine(mapping, data.sentences[i]);
+	for (var i = 0; i < data.value.length; i++) {
+		mapping = processLine(mapping, data.value[i]);
 	}
 	push(new Result(data.id, mapping.words));
 });

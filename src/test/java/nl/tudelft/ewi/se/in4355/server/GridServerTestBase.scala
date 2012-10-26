@@ -11,13 +11,17 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.HttpStatus
+import grizzled.slf4j.Logger
+import org.apache.http.util.EntityUtils
 
 class GridServerTestBase extends JUnitSuite {
 
-  val PORT = 10001
-  val HOST = "localhost"
+  private val LOG = Logger(classOf[GridServerTestBase])
 
-  val url = "http://" + HOST + ":" + PORT + "/"
+  private val PORT = 10001
+  private val HOST = "localhost"
+
+  private val url = "http://" + HOST + ":" + PORT + "/"
 
   /*
    * Server stuff
@@ -40,23 +44,27 @@ class GridServerTestBase extends JUnitSuite {
   private val client = new DefaultHttpClient
 
   def get(path: String): HttpResponse = {
-    okOrFail(client.execute(httpGetOfUri(url + path)))
+    LOG.trace("GET: " + path)
+    okOrFail(client.execute(httpGetForUri(url + path)))
   }
 
   def post(path: String, contents: String): HttpResponse = {
-    okOrFail(client.execute(newHttpPost(url + path, contents)))
+    LOG.trace("POST: " + path + " - contents: " + contents)
+    okOrFail(client.execute(httpPostForUri(url + path, contents)))
   }
 
   private def okOrFail(response: HttpResponse): HttpResponse = response.getStatusLine().getStatusCode() match {
     case HttpStatus.SC_OK => response
-    case _ => fail("Got client response: " + response)
+    case _ => {
+      fail("Got client response: " + response.getStatusLine() + "\n" + EntityUtils.toString(response.getEntity()))
+    }
   }
 
-  private def httpGetOfUri(uri: String): HttpGet = {
+  private def httpGetForUri(uri: String): HttpGet = {
     new HttpGet(uri)
   }
 
-  private def newHttpPost(uri: String, contents: String): HttpPost = {
+  private def httpPostForUri(uri: String, contents: String): HttpPost = {
     val post = new HttpPost(uri)
     post.setEntity(new StringEntity(contents))
     post
