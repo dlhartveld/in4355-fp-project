@@ -22,7 +22,7 @@ class JobsResourceServerTest extends GridServerTestBase {
   }
 
   private def createNewJob(code: String) = {
-    val response = post("/resources/jobs/new", code)
+    val response = post("/resources/jobs/new", "text/javascript", code)
     val contents = EntityUtils.toString(response.getEntity())
 
     LOG.debug("Retrieved entity: " + contents)

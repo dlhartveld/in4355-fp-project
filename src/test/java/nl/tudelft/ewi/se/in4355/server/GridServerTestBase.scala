@@ -48,9 +48,9 @@ class GridServerTestBase extends JUnitSuite {
     okOrFail(client.execute(httpGetForUri(url + path)))
   }
 
-  def post(path: String, contents: String): HttpResponse = {
+  def post(path: String, contentType: String, contents: String): HttpResponse = {
     LOG.trace("POST: " + path + " - contents: " + contents)
-    okOrFail(client.execute(httpPostForUri(url + path, contents)))
+    okOrFail(client.execute(httpPostForUri(url + path, contentType, contents)))
   }
 
   private def okOrFail(response: HttpResponse): HttpResponse = response.getStatusLine().getStatusCode() match {
@@ -64,9 +64,11 @@ class GridServerTestBase extends JUnitSuite {
     new HttpGet(uri)
   }
 
-  private def httpPostForUri(uri: String, contents: String): HttpPost = {
+  private def httpPostForUri(uri: String, contentType: String, contents: String): HttpPost = {
     val post = new HttpPost(uri)
-    post.setEntity(new StringEntity(contents))
+    val entity = new StringEntity(contents)
+    entity.setContentType(contentType)
+    post.setEntity(entity)
     post
   }
 
