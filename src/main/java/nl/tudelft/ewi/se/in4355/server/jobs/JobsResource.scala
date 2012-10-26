@@ -21,7 +21,7 @@ class JobsResource {
   val jobTracker = JobTracker
 
   @POST
-  @Path("code")
+  @Path("new")
   @Consumes(Array("text/javascript"))
   @Produces(Array("application/json"))
   def createJob(code: String) = {
