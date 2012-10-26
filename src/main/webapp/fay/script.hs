@@ -39,12 +39,10 @@ attachClick = do
 
 
 start :: Fay()
-start = do
-	print "started"
+start = ffi "startClient()"
 	
 stop :: Fay()
-stop = do
-	print "stopped"
+stop = ffi "stopClient()"
 
 -- DOM
 
