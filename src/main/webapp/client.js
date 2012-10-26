@@ -6,15 +6,10 @@ $(document).ready(function() {
 	
 	var startBtn = $("#start");
 	var stopBtn = $("#stop");
+	var taskId = -1;
 	
 	startBtn.click(function() {
-		if (!running) {
-			running = true;
-			packageProcessed = true;
-			allDataProcessed = false; 
-			startBtn.attr("disabled", "disabled");
-			stopBtn.removeAttr("disabled");
-		}
+		start();
 	});
 	
 	stopBtn.click(function() {
@@ -33,14 +28,17 @@ $(document).ready(function() {
 		if (running) {
 			if (packageProcessed) {
 				packageProcessed = false;
-				start();
+				pollNextTask(function(id) {
+					taskId = id;
+					pullCode(id);
+				});
 			}
 		}
 	}
 	
 	function fetch(callback) {
 		$.ajax({
-			url: '/resources/jobs/input', 
+			url: '/resources/jobs/' + taskId + '/input', 
 			type: 'POST', 
 			dataType: 'json', 
 			success: function(data) { 
@@ -65,7 +63,7 @@ $(document).ready(function() {
 		var serializedData = JSON.stringify(results);
 		$("#output").text(results.id + " -> " + results.wordCounts.length + " distinct words...");
 		$.ajax({
-			url: '/resources/jobs/output', 
+			url: '/resources/jobs/' + taskId + '/output', 
 			type: 'POST', 
 			contentType: 'application/json',
 			dataType: 'json', 
@@ -80,9 +78,24 @@ $(document).ready(function() {
 		});
 	}
 	
-	function start() {
+	function pollNextTask(callback) {
 		$.ajax({
-			url: '/resources/jobs/code', 
+			url: '/resources/jobs', 
+			type: 'POST', 
+			dataType: 'text', 
+			success: function(data) { 
+				callback.call(this, data);
+			},
+			error: function(x) {
+				$("#output").text(x.responseText);
+				stop();
+			}
+		});
+	}
+	
+	function pullCode(taskId) {
+		$.ajax({
+			url: '/resources/jobs/' + taskId + '/code', 
 			type: 'POST', 
 			dataType: 'text', 
 			success: function(data) { 
@@ -99,10 +112,20 @@ $(document).ready(function() {
 					finished = true;
 					return;
 				}
-				alert(x.responseText);
+				$("#output").text(x.responseText);
 				stop();
 			}
 		});
+	}
+	
+	function start() {
+		if (!running) {
+			running = true;
+			packageProcessed = true;
+			allDataProcessed = false; 
+			startBtn.attr("disabled", "disabled");
+			stopBtn.removeAttr("disabled");
+		}
 	}
 	
 	function stop() {
@@ -112,5 +135,7 @@ $(document).ready(function() {
 			startBtn.removeAttr("disabled");
 		}
 	}
+	
+	start();
 	
 });
