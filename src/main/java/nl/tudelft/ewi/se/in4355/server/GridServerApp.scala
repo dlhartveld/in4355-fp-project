@@ -17,8 +17,8 @@ object GridServerApp {
     LOG.info("Starting server on port: " + PORT + " ...");
     server.start;
 
-    new WordCountJob("loremipsum.txt").submit;
-    new WordCountJob("loremipsum.txt").submit;
+    new WordCountJob("loremipsum.txt").submit(true);
+    new WordCountJob("loremipsum.txt").submit(true);
 
     LOG.info("Server started.");
     server.join;
