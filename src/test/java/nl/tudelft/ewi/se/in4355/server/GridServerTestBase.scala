@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.HttpStatus
 import grizzled.slf4j.Logger
 import org.apache.http.util.EntityUtils
+import nl.tudelft.ewi.se.in4355.server.jobs.wordcount.WordCountJob
 
 class GridServerTestBase extends JUnitSuite {
 
@@ -31,6 +32,8 @@ class GridServerTestBase extends JUnitSuite {
 
   @Before def setUp {
     server.start
+
+    new WordCountJob("loremipsum.txt").submit(false);
   }
 
   @After def tearDown {
@@ -43,33 +46,55 @@ class GridServerTestBase extends JUnitSuite {
 
   private val client = new DefaultHttpClient
 
-  def get(path: String): HttpResponse = {
+  def getOrFail(path: String): HttpResponse = {
     LOG.trace("GET: " + path)
-    okOrFail(client.execute(httpGetForUri(url + path)))
+    okOrFail(client.execute(httpGetForUri(url + sanitized(path))))
   }
 
-  def post(path: String, contentType: String, contents: String): HttpResponse = {
-    LOG.trace("POST: " + path + " - contents: " + contents)
-    okOrFail(client.execute(httpPostForUri(url + path, contentType, contents)))
+  def postOrFail(path: String): HttpResponse = {
+    LOG.trace("POST: " + path)
+    okOrFail(client.execute(httpPostForUri(url + sanitized(path))))
+  }
+
+  def postOrFail(path: String, contentType: String, contents: String): HttpResponse = {
+    LOG.trace("POST: " + path + " - content-type: " + contentType + " - contents: " + contents)
+    okOrFail(client.execute(httpPostForUri(url + sanitized(path), contentType, contents)))
   }
 
   private def okOrFail(response: HttpResponse): HttpResponse = response.getStatusLine().getStatusCode() match {
     case HttpStatus.SC_OK => response
     case _ => {
-      fail("Got client response: " + response.getStatusLine() + "\n" + EntityUtils.toString(response.getEntity()))
+      fail("Got client response: " + response.getStatusLine() + "\n" + contentsOfResponse(response))
     }
   }
 
+  private def contentsOfResponse(response: HttpResponse) = response.getEntity() match {
+    case null => ""
+    case _ => EntityUtils.toString(response.getEntity())
+  }
+
   private def httpGetForUri(uri: String): HttpGet = {
+    LOG.trace("Creating GET for URI: " + uri)
     new HttpGet(uri)
   }
 
+  private def httpPostForUri(uri: String): HttpPost = {
+    LOG.trace("Creating POST for URI: " + uri)
+    new HttpPost(uri)
+  }
+
   private def httpPostForUri(uri: String, contentType: String, contents: String): HttpPost = {
+    LOG.trace("Creating POST for URI: " + uri + " - content-type: " + contentType + " - contents: " + contents)
     val post = new HttpPost(uri)
     val entity = new StringEntity(contents)
     entity.setContentType(contentType)
     post.setEntity(entity)
     post
+  }
+
+  private def sanitized(path: String): String = path match {
+    case path if path startsWith "/" => path.tail
+    case _ => path
   }
 
 }
