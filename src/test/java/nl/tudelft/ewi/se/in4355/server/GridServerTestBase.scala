@@ -33,7 +33,7 @@ class GridServerTestBase extends JUnitSuite {
   @Before def setUp {
     server.start
 
-    new WordCountJob("loremipsum.txt").submit(false);
+    new WordCountJob("loremipsum.txt").execute();
   }
 
   @After def tearDown {

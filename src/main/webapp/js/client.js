@@ -16,41 +16,34 @@ function stopclient() {
 	}
 }
 
-function run () {
-	
-    // Initialize a few things here...
-    (function () {
-    	
-    	if (waitUntil > new Date().getTime()) {
-    		return;
-    	}
-    	
-    	if (state == "poll") {
-    		state = "polling";
-    		pollNextTask(function(id) {
-    			if (id != "" && id >= 0) {
-    				taskId = id;
-    				pullCode(id);
-    			}
-    			else {
-    				state = "poll";
-    			}
-    		});
-    	}
-    	else if (state == "finished-package" || state == "ready-to-run") {
-    		state = "executing";
-    		eval(currentTask);
-    	}
+setInterval(function() { run(); }, 10);
 
-    	if (state == "stop") {
-    		stop();
-    	}
-    	else
-    	{
-            // Process next chunk
-            setTimeout(arguments.callee, 0);
-        }
-    })();
+function run () {
+	if (waitUntil > new Date().getTime()) {
+		return;
+	}
+	
+	if (state == "poll") {
+		state = "polling";
+		$("#debug-text").text("Polling for next job...");
+		pollNextTask(function(id) {
+			if (id != "" && id >= 0) {
+				taskId = id;
+				pullCode(id);
+			}
+			else {
+				state = "poll";
+			}
+		});
+	}
+	else if (state == "finished-package" || state == "ready-to-run") {
+		state = "executing";
+		eval(currentTask);
+	}
+
+	if (state == "stop") {
+		stop();
+	}
 }
 
 function fetch(callback) {
@@ -59,14 +52,9 @@ function fetch(callback) {
 		type: 'POST', 
 		dataType: 'json', 
 		success: function(data) { 
-			$("#debug-text").text("Received package: (" + taskId + ", " + data.id + ")");
 			callback.call(this, data);
 		},
 		error: function(x) {
-			if (x.status == 200) {
-				callback.call(this, JSON.parse(x.responseText));
-				return;
-			}
 			waitUntil = new Date().getTime() + 1000;
 			state = "poll";
 		}
@@ -75,7 +63,7 @@ function fetch(callback) {
 
 function push(results) {
 	var serializedData = JSON.stringify(results);
-	$("#debug-text").text(taskId + ": " + results.id + " -> " + results.wordCounts.length + " distinct words...");
+	$("#debug-text").text("Processed data-package: " + results.id + " of task: " + taskId);
 	$.ajax({
 		url: '/resources/jobs/' + taskId + '/output', 
 		type: 'POST', 
@@ -106,7 +94,6 @@ function pollNextTask(callback) {
 			callback.call(this, data);
 		},
 		error: function(x) {
-			$("#debug-text").text(x.responseText);
 			waitUntil = new Date().getTime() + 1000;
 			state = "poll";
 		}
@@ -127,7 +114,6 @@ function pullCode(taskId) {
 			state = "ready-to-run";
 		},
 		error: function(x) {
-			$("#debug-text").text(x.responseText);
 			waitUntil = new Date().getTime() + 1000;
 			state = "poll";
 		}

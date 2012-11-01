@@ -31,7 +31,7 @@ class WordIndex {
       var amount = words.size;
       var result = words.take(amount);
       words = words.drop(amount);
-      return words;
+      return result;
     }
   }
 

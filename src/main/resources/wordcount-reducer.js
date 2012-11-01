@@ -1,32 +1,32 @@
-// expect the following format
-// always at least one line
-//
-// aap 2
-// aap 4
-// aap 3
-
 fetch(function(data) {
-	word = getWord(data.value[0]);
-	count = 0;
-	for (var i = 0; i < data.value.length; i++) {
-		count = count + getCount(data.value[i]);
+	var results = [];
+	var first = data.value[0];
+	var count = first.count;
+	var word = first.word
+	for (var i = 1; i < data.value.length; i++) {
+		var value = data.value[i];
+		if (value.word == word) {
+			count += value.count;
+		}
+		else {
+			results.push(new WordCount(word, count));
+			word = value.word;
+			count = value.count;
+		}
+		
+		if (i + 1 == data.value.length) {
+			results.push(new WordCount(word, count));
+		}
 	}
-	push(new Result(data.id, word, count));
+	push(new WordCountList(data.id, results));
 });
 
-function getWord(line)
-{
-	var splits = line.split(" ");
-	return splits[0];
-}
-
-function getCount(oldIndex, line) {
-	var splits = line.split(" ");
-	return parseInt(splits[1]);
-}
-
-function Result(id, word, count) {
-	this.id = id;
+function WordCount(word, count) {
 	this.word = word;
 	this.count = count;
+}
+
+function WordCountList(id, wordCounts) {
+	this.id = id;
+	this.wordCounts = wordCounts;
 }

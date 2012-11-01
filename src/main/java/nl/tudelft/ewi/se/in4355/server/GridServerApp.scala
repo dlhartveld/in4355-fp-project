@@ -1,7 +1,6 @@
 package nl.tudelft.ewi.se.in4355.server
 
 import grizzled.slf4j.Logger
-import nl.tudelft.ewi.se.in4355.server.jobs.TaskTracker
 import nl.tudelft.ewi.se.in4355.server.jobs.wordcount.WordCountJob
 
 object GridServerApp {
@@ -17,8 +16,7 @@ object GridServerApp {
     LOG.info("Starting server on port: " + PORT + " ...");
     server.start;
 
-    new WordCountJob("loremipsum.txt").submit(true);
-    new WordCountJob("loremipsum.txt").submit(true);
+    new WordCountJob("loremipsum.txt").execute();
 
     LOG.info("Server started.");
     server.join;
