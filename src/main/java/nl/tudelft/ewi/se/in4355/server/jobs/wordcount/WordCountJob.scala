@@ -14,7 +14,7 @@ class WordCountJob(val inputFile: String) {
     var results = List[WordCount]();
 
     val data = readLines(inputFile).grouped(5).map((x) => JavaConversions.seqAsJavaList(x)).toList;
-    val mapTask = new MapTask[java.util.List[String], WordCount](read("wordcounter-1.js"), data, new TypeToken[WordCount]() {}) {
+    val mapTask = new MapTask[java.util.List[String], WordCount](read("wordcount-mappercombiner.js"), data, new TypeToken[WordCount]() {}) {
       def handleAnswer(result: WordCount) {
         results.+:(result);
       }

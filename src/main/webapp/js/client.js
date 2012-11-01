@@ -59,7 +59,7 @@ function fetch(callback) {
 		type: 'POST', 
 		dataType: 'json', 
 		success: function(data) { 
-			$("#debugText").text("Received package: (" + taskId + ", " + data.id + ")");
+			$("#debug-text").text("Received package: (" + taskId + ", " + data.id + ")");
 			callback.call(this, data);
 		},
 		error: function(x) {
@@ -75,7 +75,7 @@ function fetch(callback) {
 
 function push(results) {
 	var serializedData = JSON.stringify(results);
-	$("#debugText").text(taskId + ": " + results.id + " -> " + results.wordCounts.length + " distinct words...");
+	$("#debug-text").text(taskId + ": " + results.id + " -> " + results.wordCounts.length + " distinct words...");
 	$.ajax({
 		url: '/resources/jobs/' + taskId + '/output', 
 		type: 'POST', 
@@ -106,7 +106,7 @@ function pollNextTask(callback) {
 			callback.call(this, data);
 		},
 		error: function(x) {
-			$("#debugText").text(x.responseText);
+			$("#debug-text").text(x.responseText);
 			waitUntil = new Date().getTime() + 1000;
 			state = "poll";
 		}
@@ -127,7 +127,7 @@ function pullCode(taskId) {
 			state = "ready-to-run";
 		},
 		error: function(x) {
-			$("#debugText").text(x.responseText);
+			$("#debug-text").text(x.responseText);
 			waitUntil = new Date().getTime() + 1000;
 			state = "poll";
 		}
