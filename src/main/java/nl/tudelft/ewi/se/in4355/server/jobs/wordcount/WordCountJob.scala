@@ -36,7 +36,7 @@ class WordCountJob(val inputFile: String) {
       prevSize = size;
       size = reduceData.size;
       var groupedData = reduceData.grouped(100).map((x) => JavaConversions.seqAsJavaList(x)).toList;
-      val reduceTask = new MapTask[java.util.List[WordCount], WordCountList](read("wordcounter-2.js"), groupedData, new TypeToken[WordCountList]() {}) {
+      val reduceTask = new MapTask[java.util.List[WordCount], WordCountList](read("wordcount-reducer.js"), groupedData, new TypeToken[WordCountList]() {}) {
         def handleAnswer(result: WordCountList) {
           for (index <- 0 to result.wordCounts.size) {
             val count = result.wordCounts.get(index);
