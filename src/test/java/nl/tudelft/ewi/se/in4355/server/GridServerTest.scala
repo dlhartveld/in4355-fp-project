@@ -14,13 +14,9 @@ class GridServerTest extends GridServerTestBase with JUnitSuite {
 
   @Test def run {
 
-    val response = get("/")
+    val response = getOrFail("/")
 
-    if (response.getStatusLine.getStatusCode == HttpStatus.SC_OK) {
-      LOG.info("Server says yes: " + response.getStatusLine)
-    } else {
-      fail("Server response: " + response.getStatusLine)
-    }
+    LOG.info("Server says yes: " + response.getStatusLine)
 
   }
 

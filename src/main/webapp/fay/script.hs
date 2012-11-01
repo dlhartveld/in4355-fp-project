@@ -12,6 +12,7 @@ main :: Fay ()
 main = do
   ready (wrap thedocument) $ do
     attachClick
+    start
 
 
 -- click
@@ -20,29 +21,41 @@ attachClick :: Fay()
 attachClick = do
   startbutton <- query "#start-button" >>= getFirst  
   progress <- query "#progress-bar" >>= getFirst
-  unicorn <- query "#unicorn" >>= getFirst
   animated <- query "#animated_div" >>= getFirst
   
   togglestartstop <- return $ do
     active <- getIs progress ".active"
     if active
-      then do removeClass progress "active"
-              removeClass animated "active"
-              setText startbutton "start"
-              stop
-      else do addClass progress "active"
-              addClass animated "active"
-              setText startbutton "stop"
-              start
+      then do stop
+      else do start
                  
   setClick startbutton togglestartstop
 
-
 start :: Fay()
-start = ffi "startClient()"
-	
+start = do
+  startbutton <- query "#start-button" >>= getFirst  
+  progress <- query "#progress-bar" >>= getFirst
+  animated <- query "#animated_div" >>= getFirst
+  addClass progress "active"
+  addClass animated "active"
+  setText startbutton "stop"
+  startClient
+
+startClient :: Fay()
+startClient = ffi "startclient()"
+
 stop :: Fay()
-stop = ffi "stopClient()"
+stop = do
+  startbutton <- query "#start-button" >>= getFirst  
+  progress <- query "#progress-bar" >>= getFirst
+  animated <- query "#animated_div" >>= getFirst
+  removeClass progress "active"
+  removeClass animated "active"
+  setText startbutton "start"
+  stopClient
+	
+stopClient :: Fay()
+stopClient = ffi "stopclient()"
 
 -- DOM
 

@@ -21,16 +21,6 @@ import javax.ws.rs.core.Response.Status
 class JobResources {
 
   val taskTracker = TaskTracker;
-  val jobTracker = JobTracker
-
-  @POST
-  @Path("new")
-  @Consumes(Array("text/javascript"))
-  @Produces(Array("application/json"))
-  def createJob(code: String) = {
-    val id = jobTracker.addNewJob(code)
-    Response.ok("{\"job\": " + id + "}").build
-  }
 
   @POST
   @Produces(Array("text/plain"))

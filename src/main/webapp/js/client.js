@@ -1,48 +1,65 @@
-$(document).ready(function() {
-	setInterval(function() { run(); }, 50);
-});
+var currentTask = "";
+var taskId = -1;
+var state = "stopped";
+var waitUntil = 0;
 
-var running = false;
-var packageProcessed = true;
-var allDataProcessed = false;
-
-
-function startClient() {
-	if (!running) {
-		running = true;
-		packageProcessed = true;
-		allDataProcessed = false;
+function startclient() {
+	if (state == "stopped") {
+		state = "poll";
+		run();
 	}
 }
 
-function stopClient() {
-	stop();
+function stopclient() {
+	if (state != "stopped") {
+		state = "stopped";
+	}
 }
 
-
-
-function run() {
-	if (allDataProcessed && running) {
-		finished = true;
-		stop();
-		return;
-	}
+function run () {
 	
-	if (running) {
-		if (packageProcessed) {
-			packageProcessed = false;
-			start();
-		}
-	}
+    // Initialize a few things here...
+    (function () {
+    	
+    	if (waitUntil > new Date().getTime()) {
+    		return;
+    	}
+    	
+    	if (state == "poll") {
+    		state = "polling";
+    		pollNextTask(function(id) {
+    			if (id != "" && id >= 0) {
+    				taskId = id;
+    				pullCode(id);
+    			}
+    			else {
+    				state = "poll";
+    			}
+    		});
+    	}
+    	else if (state == "finished-package" || state == "ready-to-run") {
+    		state = "executing";
+    		eval(currentTask);
+    	}
+
+    	if (state == "stop") {
+    		stop();
+    	}
+    	else
+    	{
+            // Process next chunk
+            setTimeout(arguments.callee, 0);
+        }
+    })();
 }
 
 function fetch(callback) {
 	$.ajax({
-		url: '/resources/jobs/input', 
+		url: '/resources/jobs/' + taskId + '/input', 
 		type: 'POST', 
 		dataType: 'json', 
 		success: function(data) { 
-			window.console.log("Received package: " + data.id);
+			$("#debugText").text("Received package: (" + taskId + ", " + data.id + ")");
 			callback.call(this, data);
 		},
 		error: function(x) {
@@ -50,61 +67,69 @@ function fetch(callback) {
 				callback.call(this, JSON.parse(x.responseText));
 				return;
 			}
-			else if (x.status == 204) {
-				allDataProcessed = true;
-				return;
-			}
-			stop();
+			waitUntil = new Date().getTime() + 1000;
+			state = "poll";
 		}
 	});
 }
 
 function push(results) {
 	var serializedData = JSON.stringify(results);
-	window.console.log(results.id + " -> " + results.wordCounts.length + " distinct words...");
+	$("#debugText").text(taskId + ": " + results.id + " -> " + results.wordCounts.length + " distinct words...");
 	$.ajax({
-		url: '/resources/jobs/output', 
+		url: '/resources/jobs/' + taskId + '/output', 
 		type: 'POST', 
 		contentType: 'application/json',
 		dataType: 'json', 
 		data: serializedData,
 		success: function(data) { 
-			packageProcessed = true;
-			allDataProcessed = !data.hasMoreData;
+			if (data.hasMoreData) {
+				state = "finished-package";
+			}
+			else {
+				state = "poll";
+			}
 		},
 		error: function(x) {
-			stop();
+			waitUntil = new Date().getTime() + 1000;
+			state = "poll";
 		}
 	});
 }
 
-function start() {
+function pollNextTask(callback) {
 	$.ajax({
-		url: '/resources/jobs/code', 
+		url: '/resources/jobs', 
+		type: 'POST', 
+		dataType: 'text', 
+		success: function(data) { 
+			callback.call(this, data);
+		},
+		error: function(x) {
+			$("#debugText").text(x.responseText);
+			waitUntil = new Date().getTime() + 1000;
+			state = "poll";
+		}
+	});
+}
+
+function pullCode(taskId) {
+	$.ajax({
+		url: '/resources/jobs/' + taskId + '/code', 
 		type: 'POST', 
 		dataType: 'text', 
 		success: function(data) { 
 			if (data.length == 0) {
-				allDataProcessed = true;
-				finished = true;
+				state = "poll";
 				return;
 			}
-			eval(data);
+			currentTask = data;
+			state = "ready-to-run";
 		},
 		error: function(x) {
-			if (x.status == 204) {
-				allDataProcessed = true;
-				finished = true;
-				return;
-			}
-			alert(x.responseText);
-			stop();
+			$("#debugText").text(x.responseText);
+			waitUntil = new Date().getTime() + 1000;
+			state = "poll";
 		}
 	});
-}
-
-function stop() {
-	if (running) {
-		running = false;
-	}
 }

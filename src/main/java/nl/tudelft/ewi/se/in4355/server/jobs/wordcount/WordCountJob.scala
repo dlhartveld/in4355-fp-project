@@ -11,7 +11,7 @@ class WordCountJob(val inputFile: String) {
 
   val tracker = TaskTracker;
 
-  def submit() {
+  def submit(waitForCompletion: Boolean) {
 
     var results = new WordIndex();
 
@@ -26,9 +26,7 @@ class WordCountJob(val inputFile: String) {
     };
     tracker.submitTask(mapTask);
 
-    while (mapTask.hasNext) {
-      Thread.sleep(100);
-    }
+    while (mapTask.hasNext) {}
 
     var size = 0;
     var prevSize = -1;
