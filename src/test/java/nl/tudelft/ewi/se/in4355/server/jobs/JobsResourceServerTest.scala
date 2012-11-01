@@ -6,32 +6,45 @@ import nl.tudelft.ewi.se.in4355.server.GridServerTestBase
 import org.apache.http.HttpEntity
 import grizzled.slf4j.Logger
 import scala.util.parsing.json.JSON
+import org.apache.http.HttpResponse
 
 class JobsResourceServerTest extends GridServerTestBase {
 
   val LOG = Logger(classOf[JobsResourceServerTest])
 
-  @Test def testThatPostingNewJobsWorks {
-    val response = createNewJob("Code for my first job")
+  @Test
+  def doSmokeTestForCodeAndDataRetrieval() {
+    val nextTask = getNextTaskId
+    LOG.info("Next task: " + nextTask)
 
-    println(response)
+    val code = retrieveCodeForTask(nextTask)
+    LOG.info("Code: " + code)
 
-    val job = response.get("job").get.asInstanceOf[Double]
-
-    assert(job == 0)
+    for (i <- 0 until 200) {
+      val data = retrieveDataForTask(nextTask)
+      LOG.info("Data[" + i + ": " + data)
+    }
   }
 
-  private def createNewJob(code: String) = {
-    val response = post("/resources/jobs/new", "text/javascript", code)
-    val contents = EntityUtils.toString(response.getEntity())
+  private def getNextTaskId() = {
+    contentsOf(postOrFail("/resources/jobs/")).trim.toInt
+  }
 
-    LOG.debug("Retrieved entity: " + contents)
+  private def retrieveCodeForTask(nextTask: Int) = {
+    contentsOf(postOrFail("/resources/jobs/" + nextTask + "/code"))
+  }
 
-    parse(contents)
+  private def retrieveDataForTask(nextTask: Int) = {
+    parse(contentsOf(postOrFail("/resources/jobs/" + nextTask + "/input")))
   }
 
   private def parse(json: String) = {
     JSON.parseFull(json).get.asInstanceOf[Map[String, Any]]
+  }
+
+  private def contentsOf(response: HttpResponse) = response.getEntity match {
+    case null => ""
+    case _ => EntityUtils.toString(response.getEntity())
   }
 
 }
