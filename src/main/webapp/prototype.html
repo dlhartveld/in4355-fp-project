@@ -4,6 +4,16 @@
 		<title>GRID</title>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script type="text/javascript" src="js/client.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("#start").click(function() {
+					startClient();
+				});
+				$("#stop").click(function() {
+					stopClient();
+				});
+			});
+		</script>
 	</head>
 	<body>
 		<div id="input" style="border: 1px solid #ccc;"></div>
