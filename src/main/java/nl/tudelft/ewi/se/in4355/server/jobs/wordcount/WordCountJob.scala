@@ -5,14 +5,13 @@ import com.google.gson.reflect.TypeToken
 import nl.tudelft.ewi.se.in4355.server.jobs.MapTask
 import nl.tudelft.ewi.se.in4355.server.jobs.TaskTracker
 import nl.tudelft.ewi.se.in4355.server.jobs.ReduceTask
+import java.util.concurrent.Callable
 
-class WordCountJob(val inputFile: String) {
+class WordCountJob(val inputFile: String) extends Callable[WordIndex] {
 
   val tracker = TaskTracker;
 
-  def execute() {
-    printResults(reduceAll(map()));
-  }
+  def call(): WordIndex = reduceAll(map());
 
   private def map(): WordIndex = {
     var results = new WordIndex();
@@ -63,15 +62,6 @@ class WordCountJob(val inputFile: String) {
     tracker.submitTask(reduceTask);
     while (reduceTask.hasNext) {
       Thread.sleep(100);
-    }
-  }
-
-  private def printResults(results: WordIndex) {
-    val words = results.takeAll;
-    println("Found " + words.size + " distinct words!");
-    for (i <- 0 to words.size - 1) {
-      val count = words(i);
-      println(count.count + " x\t" + count.word);
     }
   }
 

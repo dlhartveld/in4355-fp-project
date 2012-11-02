@@ -14,6 +14,7 @@ import org.apache.http.HttpStatus
 import grizzled.slf4j.Logger
 import org.apache.http.util.EntityUtils
 import nl.tudelft.ewi.se.in4355.server.jobs.wordcount.WordCountJob
+import java.util.concurrent.Executors
 
 class GridServerTestBase extends JUnitSuite {
 
@@ -33,7 +34,8 @@ class GridServerTestBase extends JUnitSuite {
   @Before def setUp {
     server.start
 
-    new WordCountJob("loremipsum.txt").execute();
+    val executor = Executors.newFixedThreadPool(1);
+    val future = executor.submit(new WordCountJob("loremipsum.txt"));
   }
 
   @After def tearDown {

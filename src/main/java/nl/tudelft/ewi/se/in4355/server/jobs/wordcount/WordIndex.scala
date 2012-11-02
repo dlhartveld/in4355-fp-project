@@ -35,6 +35,14 @@ class WordIndex {
     }
   }
 
+  def printContents() {
+    println("Found " + words.size + " distinct words!");
+    for (i <- 0 to words.size - 1) {
+      val count = words(i);
+      println(count.count + " x\t" + count.word);
+    }
+  }
+
   def size = words.size;
 
 }

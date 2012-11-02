@@ -2,6 +2,7 @@ package nl.tudelft.ewi.se.in4355.server
 
 import grizzled.slf4j.Logger
 import nl.tudelft.ewi.se.in4355.server.jobs.wordcount.WordCountJob
+import java.util.concurrent.Executors
 
 object GridServerApp {
 
@@ -16,7 +17,10 @@ object GridServerApp {
     LOG.info("Starting server on port: " + PORT + " ...");
     server.start;
 
-    new WordCountJob("loremipsum.txt").execute();
+    val executor = Executors.newFixedThreadPool(1);
+    val future = executor.submit(new WordCountJob("loremipsum.txt"));
+
+    future.get().printContents;
 
     LOG.info("Server started.");
     server.join;
