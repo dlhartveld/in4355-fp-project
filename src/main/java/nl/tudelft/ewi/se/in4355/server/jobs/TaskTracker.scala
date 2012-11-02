@@ -23,14 +23,36 @@ object TaskTracker {
   }
 
   def hasMoreData(taskId: Int): Boolean = {
-    val task = getTask(taskId);
-    if (task != null) {
-      return task.hasNext;
+    this.synchronized {
+      val task = getTask(taskId);
+      if (task != null) {
+        return task.hasNext;
+      }
+      return false;
     }
-    return false;
   }
 
-  def getTask(taskId: Int): Task[_, _] = {
+  def getCode(taskId: Int): String = {
+    this.synchronized {
+      val task = getTask(taskId);
+      if (task != null) {
+        return task.getCode;
+      }
+      return null;
+    }
+  }
+
+  def getNextBatch(taskId: Int): Input[_] = {
+    this.synchronized {
+      val task = getTask(taskId);
+      if (task != null) {
+        return task.nextBatch;
+      }
+      return null;
+    }
+  }
+
+  private def getTask(taskId: Int): Task[_, _] = {
     this.synchronized {
       clearDoneJobs();
       try {
@@ -45,6 +67,15 @@ object TaskTracker {
     this.synchronized {
       clearDoneJobs();
       return tasks.keySet.iterator.next;
+    }
+  }
+
+  def markDone(taskId: Int, dataId: Int, input: String) {
+    this.synchronized {
+      val task = getTask(taskId);
+      if (task != null) {
+        task.markDone(dataId, input);
+      }
     }
   }
 

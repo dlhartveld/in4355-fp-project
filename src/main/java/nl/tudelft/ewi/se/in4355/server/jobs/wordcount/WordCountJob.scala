@@ -17,6 +17,8 @@ class WordCountJob(val inputFile: String) extends Callable[WordIndex] {
     var results = new WordIndex();
 
     val data = readLines(inputFile).grouped(500).map((x) => JavaConversions.seqAsJavaList(x)).toList;
+    println("Mapping " + data.size + " data packages");
+
     val mapTask = new MapTask[java.util.List[String], WordCountList](read("wordcount-mappercombiner.js"), data, new TypeToken[WordCountList]() {}) {
       def handleAnswer(result: WordCountList) {
         for (index <- 0 to result.wordCounts.size - 1) {
@@ -42,7 +44,9 @@ class WordCountJob(val inputFile: String) extends Callable[WordIndex] {
       var reduceData = results.takeAll;
       prevSize = size;
       size = reduceData.size;
-      var groupedData = reduceData.grouped(1000).map((x) => JavaConversions.seqAsJavaList(x)).toList;
+      var groupedData = reduceData.grouped(10000).map((x) => JavaConversions.seqAsJavaList(x)).toList;
+      println("Reducing " + groupedData.size + " data packages (" + size + " words total)");
+
       reduce(results, groupedData);
     }
 
