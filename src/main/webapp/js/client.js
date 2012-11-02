@@ -16,7 +16,7 @@ function stopclient() {
 	}
 }
 
-setInterval(function() { run(); }, 10);
+setInterval(function() { run(); }, 100);
 
 function run () {
 	if (waitUntil > new Date().getTime()) {
@@ -55,7 +55,7 @@ function fetch(callback) {
 			callback.call(this, data);
 		},
 		error: function(x) {
-			waitUntil = new Date().getTime() + 1000;
+			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
 		}
 	});
@@ -79,7 +79,7 @@ function push(results) {
 			}
 		},
 		error: function(x) {
-			waitUntil = new Date().getTime() + 1000;
+			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
 		}
 	});
@@ -94,7 +94,7 @@ function pollNextTask(callback) {
 			callback.call(this, data);
 		},
 		error: function(x) {
-			waitUntil = new Date().getTime() + 1000;
+			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
 		}
 	});
@@ -114,7 +114,7 @@ function pullCode(taskId) {
 			state = "ready-to-run";
 		},
 		error: function(x) {
-			waitUntil = new Date().getTime() + 1000;
+			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
 		}
 	});
