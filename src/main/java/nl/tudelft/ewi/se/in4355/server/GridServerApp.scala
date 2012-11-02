@@ -18,7 +18,7 @@ object GridServerApp {
     server.start;
 
     val executor = Executors.newFixedThreadPool(1);
-    val future = executor.submit(new WordCountJob("loremipsum.txt"));
+    val future = executor.submit(new WordCountJob("game-of-thrones.txt"));
 
     future.get().printContents;
 
