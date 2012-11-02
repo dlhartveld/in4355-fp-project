@@ -2,6 +2,7 @@ package nl.tudelft.ewi.se.in4355.server.jobs.wordcount
 
 import scala.collection.JavaConversions
 import java.util.PriorityQueue
+import java.io._
 
 class WordIndex {
 
@@ -42,11 +43,14 @@ class WordIndex {
 
   def printContents() {
     val sortedWords = JavaConversions.collectionAsScalaIterable(words).toList.sortBy(_.count * -1);
-    println("Found " + sortedWords.size + " distinct words!");
+    val f = new File("output.txt");
+    val p = new java.io.PrintWriter(f)
+    p.println("Found " + sortedWords.size + " distinct words!");
     for (i <- 0 to sortedWords.size - 1) {
       val count = sortedWords(i);
-      println(count.count + " x\t\"" + count.word + "\"");
+      p.println(count.count + " x\t\"" + count.word + "\"");
     }
+    p.close();
   }
 
   def size = words.size;

@@ -16,35 +16,43 @@ function stopclient() {
 	}
 }
 
-setInterval(function() { run(); }, 100);
-
 function run () {
-	if (waitUntil > new Date().getTime()) {
-		return;
-	}
 	
-	if (state == "poll") {
-		state = "polling";
-		$("#debug-text").text("Polling for next job...");
-		pollNextTask(function(id) {
-			if (id != "" && id >= 0) {
-				taskId = id;
-				pullCode(id);
-			}
-			else {
-				state = "poll";
-			}
-		});
-	}
-	else if (state == "finished-package" || state == "ready-to-run") {
-		state = "executing";
-		eval(currentTask);
-	}
+    // Initialize a few things here...
+    (function () {
+    	
+    	if (waitUntil > new Date().getTime()) {
+    		return;
+    	}
+    	
+    	if (state == "poll") {
+    		state = "polling";
+    		pollNextTask(function(id) {
+    			if (id != "" && id >= 0) {
+    				taskId = id;
+    				pullCode(id);
+    			}
+    			else {
+    				state = "poll";
+    			}
+    		});
+    	}
+    	else if (state == "finished-package" || state == "ready-to-run") {
+    		state = "executing";
+    		eval(currentTask);
+    	}
 
-	if (state == "stop") {
-		stop();
-	}
+    	if (state == "stop") {
+    		stop();
+    	}
+    	else
+    	{
+            // Process next chunk
+            setTimeout(arguments.callee, 0);
+        }
+    })();
 }
+
 
 function fetch(callback) {
 	$.ajax({
@@ -57,6 +65,7 @@ function fetch(callback) {
 		error: function(x) {
 			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
+			//setTimeout(run, 0);
 		}
 	});
 }
@@ -81,6 +90,7 @@ function push(results) {
 		error: function(x) {
 			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
+			//setTimeout(run, 0);
 		}
 	});
 }
@@ -96,6 +106,7 @@ function pollNextTask(callback) {
 		error: function(x) {
 			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
+			//setTimeout(run, 0);
 		}
 	});
 }
@@ -116,6 +127,7 @@ function pullCode(taskId) {
 		error: function(x) {
 			waitUntil = new Date().getTime() + 5000;
 			state = "poll";
+			//setTimeout(run, 0);
 		}
 	});
 }
