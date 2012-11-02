@@ -16,8 +16,8 @@ function getWords(line) {
 	var index = new Index();
 	var splits = line.split(" ");
 	for (var i = 0; i < splits.length; i++) {
-		var split = splits[i].replace(/[^0-9A-Za-z]/g, "").trim();
-		if(stopwords.indexOf(split) == -1)
+		var split = splits[i].replace(/[^0-9A-Za-z]/g, "").toLowerCase().trim();
+		if(split.length > 0 && stopwords.indexOf(split) == -1)
 		{
 			index = add(index, new Count(split, 1));
 		}

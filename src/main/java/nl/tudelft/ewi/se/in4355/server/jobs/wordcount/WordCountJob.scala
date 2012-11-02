@@ -29,7 +29,7 @@ class WordCountJob(val inputFile: String) extends Callable[WordIndex] {
     };
     tracker.submitTask(mapTask);
 
-    while (mapTask.hasNext) {
+    while (!mapTask.completed) {
       Thread.sleep(100);
     }
 
@@ -64,7 +64,7 @@ class WordCountJob(val inputFile: String) extends Callable[WordIndex] {
     };
 
     tracker.submitTask(reduceTask);
-    while (reduceTask.hasNext) {
+    while (!reduceTask.completed) {
       Thread.sleep(100);
     }
   }
