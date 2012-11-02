@@ -11,7 +11,10 @@ class WordCountJob(val inputFile: String) {
   val tracker = TaskTracker;
 
   def execute() {
+    printResults(reduceAll(map()));
+  }
 
+  private def map(): WordIndex = {
     var results = new WordIndex();
 
     val data = readLines(inputFile).grouped(50).map((x) => JavaConversions.seqAsJavaList(x)).toList;
@@ -29,6 +32,10 @@ class WordCountJob(val inputFile: String) {
       Thread.sleep(100);
     }
 
+    return results;
+  }
+
+  private def reduceAll(results: WordIndex): WordIndex = {
     var size = 0;
     var prevSize = -1;
 
@@ -37,21 +44,29 @@ class WordCountJob(val inputFile: String) {
       prevSize = size;
       size = reduceData.size;
       var groupedData = reduceData.grouped(100).map((x) => JavaConversions.seqAsJavaList(x)).toList;
-      val reduceTask = new ReduceTask[java.util.List[WordCount], WordCountList](read("wordcount-reducer.js"), groupedData, new TypeToken[WordCountList]() {}) {
-        def handleAnswer(result: WordCountList) {
-          for (index <- 0 to result.wordCounts.size - 1) {
-            val count = result.wordCounts.get(index);
-            results.insert(count);
-          }
-        }
-      };
-
-      tracker.submitTask(reduceTask);
-      while (reduceTask.hasNext) {
-        Thread.sleep(100);
-      }
+      reduce(results, groupedData);
     }
 
+    return results;
+  }
+
+  private def reduce(results: WordIndex, groupedData: List[java.util.List[WordCount]]) {
+    val reduceTask = new ReduceTask[java.util.List[WordCount], WordCountList](read("wordcount-reducer.js"), groupedData, new TypeToken[WordCountList]() {}) {
+      def handleAnswer(result: WordCountList) {
+        for (index <- 0 to result.wordCounts.size - 1) {
+          val count = result.wordCounts.get(index);
+          results.insert(count);
+        }
+      }
+    };
+
+    tracker.submitTask(reduceTask);
+    while (reduceTask.hasNext) {
+      Thread.sleep(100);
+    }
+  }
+
+  private def printResults(results: WordIndex) {
     val words = results.takeAll;
     println("Found " + words.size + " distinct words!");
     for (i <- 0 to words.size - 1) {
