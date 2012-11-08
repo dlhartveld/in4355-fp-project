@@ -7,3 +7,6 @@ output.txt
 report/report.aux
 report/report.log
 report/report.synctex.gz
+report/report.bbl
+report/report.blg
+report/report.pdf
