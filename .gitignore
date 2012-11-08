@@ -4,3 +4,6 @@ target
 .classpath
 .cache
 output.txt
+report/report.aux
+report/report.log
+report/report.synctex.gz
