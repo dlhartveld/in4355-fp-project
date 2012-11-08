@@ -1,10 +1,14 @@
+\subsection{Overview}
 Our initial intention was to limit ourselves to the use of Fay \cite{Fay} in
 stead of javascript. Fay is a programming language which contains the grammer
 and syntax of the functional programming language Haskell, and some additional
 grammer and syntax which enables you to store variables and interact with
 javascript. Before you can use Fay, you have to install the Fay compiler. Once
 that is installed you can compile Fay source files into Javascript source files
-using the command line. The documentation on the Fay website seems to be
+using the command line. 
+
+\subsection{Problems}
+The documentation on the Fay website seems to be
 outdated, as the compiler arguments have changed. Luckily the Fay compiler can
 tell you what the command line options are. However this was not our only
 problem with Fay. Some of the compiler's features did not work as specified.
@@ -12,6 +16,7 @@ Supposedly it should be possible to format/beautify the produced Javascript code
 using the command line argument "--pretty", but this doesn't seem to be doing
 anything. The same applies to the "--library" argument which ensures that in the
 resulting Javascript source code, the main function is not immediately called.
+
 But most problematic of all was the fact that Fay produces Javascript code which
 is wrapped in a function scope to avoid leaking scope. This means that we cannot
 call any functions compiled by Fay from external Javascript source code. Even if
