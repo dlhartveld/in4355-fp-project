@@ -4,9 +4,9 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties
 import org.codehaus.jackson.annotate.JsonCreator
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Output[T](val id: Int, val value: T) {
-    @JsonCreator
-    def this() {
-    	this(id = -1, value = null.asInstanceOf[T]);
-    }
+case class Output[T](val id: Int, val value: T) {
+  @JsonCreator
+  def this() {
+    this(id = -1, value = null.asInstanceOf[T]);
+  }
 }

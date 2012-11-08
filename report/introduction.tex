@@ -1,9 +1,18 @@
-Functional programming is increasingly used in programming languages. Besides new functional languages such as Scheme, Haskell and Scala, 
-functional programming concepts are also added to existing non-functional languages. An example of this is LINQ (Language Integrated Query) 
-and its use of lambdas in C\#, but there are lots of other non-functional languages who support some form of functional programming constructs.
-To get familiar with functional programming principles and languages we built a small grid computing framework to do map-reduce computations.
-MapReduce is in spired by the map and reduce functions commonly used in functional programming.
+Functional programming is becoming increasingly more used in programming
+languages. Besides functional languages such as Scheme and Haskell, relatively
+new languages like Javascript and Scala are also adding features from functional
+programming to their repetoire. Another example of this is LINQ (Language
+Integrated Query) and its use of lambdas in C\#, but there are lots of other
+non-functional languages who support some form of functional programming
+constructs. To get familiar with functional programming principles and languages
+we built a small grid computing framework to do map-reduce computations.
+MapReduce is in spired by the map and reduce functions commonly used in
+functional programming.
 
-This article focuses on the functional aspects, details, pitfalls and shortcomings of languages we cam accross while building the grid computing framework
-with functional languages. We will discuss the implementation of a simple map-reduce algorithm and how we distributed the map and reduce steps over connected clients. 
-We chose word count as the algorithm to implement, because of its simplicity and the clearly defined operations for the map and reduce steps.
+This article focuses on the functional aspects, details, pitfalls and
+shortcomings of languages we came accross while building the grid computing
+framework with functional languages. We will discuss the implementation of a
+simple map-reduce algorithm and how we distributed the map and reduce steps over
+several browser clients. We chose word count as the algorithm to implement,
+because of its simplicity and the clearly defined operations for the map and
+reduce steps.

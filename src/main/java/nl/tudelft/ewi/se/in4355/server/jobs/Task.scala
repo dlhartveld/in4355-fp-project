@@ -1,5 +1,10 @@
 package nl.tudelft.ewi.se.in4355.server.jobs
 
+import scala.actors.Actor
+
+import org.codehaus.jackson.annotate.JsonCreator
+import org.codehaus.jackson.annotate.JsonIgnoreProperties
+
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -57,7 +62,9 @@ abstract class Task[F, T](val code: String, val input: List[F], val resultType: 
   def markDone(id: Int, result: String) {
     this.synchronized {
       indices = indices.-(id);
-      handleAnswer(new Gson().fromJson(result, resultType.getType()))
+      concurrent.ops.spawn {
+        handleAnswer(new Gson().fromJson(result, resultType.getType()))
+      }
     }
   }
 

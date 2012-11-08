@@ -16,14 +16,16 @@ object GridServerApp {
 
     LOG.info("Starting server on port: " + PORT + " ...");
     server.start;
+    LOG.info("Server started.");
 
     val executor = Executors.newFixedThreadPool(1);
     val future = executor.submit(new WordCountJob("game-of-thrones.txt"));
 
     future.get().printContents;
 
-    LOG.info("Server started.");
-    server.join;
+    LOG.info("Stopping server.")
+    server.stop
+    server.join
   }
 
 }
