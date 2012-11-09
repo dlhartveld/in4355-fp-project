@@ -1,3 +1,5 @@
+\subsection{Overview}
+
 An important aspect in MapReduce computations is the requirement that the output of a mapper
 gets routed to the correct reducer.
 Multiple mappers can output data with the same key and this data should end up
@@ -6,6 +8,8 @@ In MapReduce this is done by the partitioning function. This function determines
 the reducer that should receive the data by doing a transformation from the key
 to the index of a reducer. Reducers start fetching the data from the mappers and
 then sort the received data locally.
+
+\subsection{Sort out the sorting}
 
 Our MapReduce implementation on the grid this gives some challenges.
 Our clients do not have a shared file system where they can write data to, so
