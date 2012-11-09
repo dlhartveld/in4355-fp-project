@@ -31,16 +31,16 @@ the imperative worlds is highest - respectively side-effect free programming ver
 imperative programming.
 
 \subsection{Option vs Exception}
-Another example of a niceness of functional languages is the concept of Option\[T\].
+Another example of a niceness of functional languages is the concept of Option[T].
 Where, in most imperative, object-oriented programming languages, you have to throw
 and catch exceptions, which litter through your code as soda cans on a high school playground,
-the Scala language supports the Option\[T\] type that takes away some of this pain.
+the Scala language supports the Option[T] type that takes away some of this pain.
 It is primarily useful in cases where you know that called code might behave in an
 exceptional way (and where OO code would throw an exception), but where you are not
 quite interested in that fact, but just in the result of the computation, which would
 be nothing, or some default value, in the case of failure.
 
-Scala supports this through the case class Option\[T\]. When a function returns an Option on T,
+Scala supports this through the case class Option[T]. When a function returns an Option on T,
 it simply means that, in case of succes, it is Some T, and in case of failure, it is
 None (representing no result, nothing). In many cases, this is sufficient information
 for the caller. For example, in the scala client implementation, we used the Apache HttpClient
@@ -51,6 +51,4 @@ but just in the question of whether a job needs to be done or not. So we let the
 wrapper return an Option of HttpResponse, which is Some(HttpResponse) on succes, and None
 on failure. A simple pattern matching on each of these conditions in the caller method is then 
 enough to distinguish between these situations. While it is a specific solution, it does
-demonstrate the elegance of the Option\[T\] pattern\footnote{In Haskell, the Maybe type is the equivalent of Scala's Option}.
-
-\subsection{Test-driven development}
+demonstrate the elegance of the Option[T] pattern\footnote{In Haskell, the Maybe type is the equivalent of Scala's Option}.
