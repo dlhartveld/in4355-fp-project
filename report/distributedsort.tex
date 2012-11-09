@@ -15,6 +15,6 @@ create reducer jobs of the gathered data.
 In this case it would be important to create enough reduce jobs.
 
 In our current implementation there is no partitioning function. The mappers
-send the data sorted to the server which does a merge sort on the sorted inputs
+send the data sorted to the server which merges the sorted inputs
 and then distributes the data to the reducers. The sort step is therefore
-performed by the mappers and the server instea of by the reducers.
+performed by the mappers and the server instead of by the reducers.
