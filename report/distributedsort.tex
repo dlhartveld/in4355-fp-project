@@ -1,0 +1,20 @@
+An important aspect in MapReduce computations is that the output of a mapper
+gets routed to the correct reducer.
+Multiple mappers can output data with the same key and this data should end up
+at the same reducer.
+In MapReduce this is done by the partitioning function. This function determines
+the reducer that should receive the data by doing a transformation from the key
+to the index of a reducer. Reducers start fetching the data from the mappers and
+then sort the received data locally.
+
+In our MapReduce implementation on the grid this gives some challenges.
+Our clients do not have a shared file system where they can write data to, so
+the reducers cannot fetch the data from the mappers.
+A possible solution for this is to let the server gather the data and then
+create reducer jobs of the gathered data.
+In this case it would be important to create enough reduce jobs.
+
+In our current implementation there is no partitioning function. The mappers
+send the data sorted to the server which does a merge sort on the sorted inputs
+and then distributes the data to the reducers. The sort step is therefore
+performed by the mappers and the server instea of by the reducers.
