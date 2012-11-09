@@ -11,7 +11,7 @@ then sort the received data locally.
 
 \subsection{Sort out the sorting}
 
-Our MapReduce implementation on the grid this gives some challenges.
+Our MapReduce implementation on the grid gives some challenges.
 Our clients do not have a shared file system where they can write data to, so
 the reducers cannot fetch the data from the mappers.
 A possible solution for this is to let the server gather the data and then

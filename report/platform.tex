@@ -16,11 +16,11 @@ that it is a wordcount job.
 	\subsection{How does it work?}
 		The server contains a list of jobs. To request a map or reduce job, a client can navigate to /jobs. 
 		This call returns an id for the current job, that the client can execute. Using this id, 
-		the client can request the javascript code for the job with the corresponding id by calling /{id}/code
-		and the input data for the job with the corresponding id by calling /{id}/input.
+		the client can request the javascript code for the job with the corresponding id by calling /\{id\}/code
+		and the input data for the job with the corresponding id by calling /\{id\}/input.
 		The code for the job should contain a call to the fetch function to request data and should contain a call to the push
 		function to send the result back to the server.
-		Data can be send to the server by calling /{id}/output.
+		Data can be send to the server by calling /\{id\}/output.
 		
 		In this way, the framework is very generic meaning that a variety of MapReduce algorithms can be run on the platform.
 		
