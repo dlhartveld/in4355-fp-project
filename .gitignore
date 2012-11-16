@@ -3,7 +3,7 @@ target
 .project
 .classpath
 .cache
-output.txt
+*.txt
 report/report.aux
 report/report.log
 report/report.synctex.gz

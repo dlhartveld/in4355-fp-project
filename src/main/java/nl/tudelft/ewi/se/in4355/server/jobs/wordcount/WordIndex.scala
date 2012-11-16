@@ -6,7 +6,7 @@ import java.io._
 
 class WordIndex {
 
-  val limit = 100;
+  val limit = 10;
 
   private var words = new PriorityQueue[WordCount]();
 
