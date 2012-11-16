@@ -7,23 +7,38 @@ import org.apache.http.HttpEntity
 import grizzled.slf4j.Logger
 import scala.util.parsing.json.JSON
 import org.apache.http.HttpResponse
+import org.junit.Ignore
 
 class JobsResourceServerTest extends GridServerTestBase {
 
   val LOG = Logger(classOf[JobsResourceServerTest])
 
   @Test
+  @Ignore
   def doSmokeTestForCodeAndDataRetrieval() {
-    val nextTask = getNextTaskId
-    LOG.info("Next task: " + nextTask)
+    val job = getNextTaskId
+    LOG.info("Next job: " + job)
 
-    val code = retrieveCodeForTask(nextTask)
+    val code = retrieveCodeForTask(job)
     LOG.info("Code: " + code)
 
-    for (i <- 0 until 200) {
-      val data = retrieveDataForTask(nextTask)
-      LOG.info("Data[" + i + ": " + data)
+    val tasks = Set[Int]()
+    for (i <- 0 until 31) {
+      LOG.info("i: " + i)
+      val data = retrieveDataForTask(job)
+      val task = unwrap(data.get("id"))
+      task match {
+        case -1 => LOG.info("Received task -1. Done."); return
+        case id =>
+          LOG.info("Sending result for task: " + task)
+          deliverEmptyResult(task)
+      }
     }
+  }
+
+  private def unwrap(id: Option[Any]): Int = id.get match {
+    case id: Double => id.toInt
+    case _ => -1
   }
 
   private def getNextTaskId() = {
@@ -36,6 +51,10 @@ class JobsResourceServerTest extends GridServerTestBase {
 
   private def retrieveDataForTask(nextTask: Int) = {
     parse(contentsOf(postOrFail("/resources/jobs/" + nextTask + "/input")))
+  }
+
+  private def deliverEmptyResult(task: Int) = {
+    parse(contentsOf(postOrFail("/resources/jobs/" + task + "/output", "application/json", "{\"id\": " + task + ", \"value\": \"\"}")))
   }
 
   private def parse(json: String) = {

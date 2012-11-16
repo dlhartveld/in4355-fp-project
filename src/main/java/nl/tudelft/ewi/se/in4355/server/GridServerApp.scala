@@ -18,6 +18,7 @@ object GridServerApp {
 
     LOG.info("Starting server on port: " + PORT + " ...");
     server.start;
+    LOG.info("Server started.");
 
     LOG.info("Press ENTER to submit job!");
     val reader = new InputStreamReader(System.in);
@@ -34,8 +35,9 @@ object GridServerApp {
 
     future.get().printContents;
 
-    LOG.info("Server started.");
-    server.join;
+    LOG.info("Stopping server.")
+    server.stop
+    server.join
   }
 
 }

@@ -1,9 +1,9 @@
 MapReduce is a (functional) programming model for processing large amounts of
-data over a distributed network of nodes. Probably the most known implementation
+data over a distributed network of nodes. Probably the best known implementation
 of MapReduce is Hadoop \cite{Hadoop}. Data can be manipulated by defining a map
-and reduce funtion. A map function transforms data from one form into another
-and a reduce function combines multiple data entries into a single entry.
-MapReduce essentially works by splitting the potentially huge input data up into
+and a reduce function. A map function transforms input data entries from one form into another
+and a reduce function combines multiple data entries into a single output entry.
+MapReduce essentially works by splitting up the potentially huge input data into
 several partitions. Each partition is then sent off to a different worker in the
 network, which in turn applies the map function on the data partition. This is
 called the map phase. The result of the map operation is usually stored
@@ -16,7 +16,7 @@ both phases the result can be read. This programming model allows developers to
 solve problems quickly while leveraging a cluster of computers, which with a
 single computer would take significantly longer. Obviously there is a penalty
 for having to use the network, but this is offset by the fact that the
-map-reduce cluster is capable of solving problems with very large input sets.
+MapReduce cluster is capable of solving problems with very large input sets.
 
 \begin{figure}[htb] 
 \includegraphics[width=340px]{mapreduce.png} 

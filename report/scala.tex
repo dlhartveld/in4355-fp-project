@@ -1,0 +1,54 @@
+% string concatenation has horrible performance in a functional scenario.
+% use stringbuilder instead, but this breaks side-effects-free coding. Monad?
+
+For each of us, this project was our initial introduction to the Scala
+language. Between the three of us, we had a lot of experience with Java and C\#.
+We did have some knowledge of functional programming, but this was very limited.
+Therefore, we had the opportunity to extensively discover and experience the
+possibilities and limitations of functional programming in comparison to
+object-oriented programming. This section describes some observations on the use
+of Scala and its functional features in addition to the imperative,
+object-oriented programming style, in comparison to imperative, object-oriented
+programming in Java or C\#.
+
+\subsection{Collection manipulation}
+The most obvious advantage of functional language features such as higher-order
+functions and lambda expressions is their use in the context of collections. The
+availability of map, reduce, fold, foreach, filter, etc. makes it possible to
+write very, very compact code that is highly expressive. What is even nicer, is that
+you can parallelize function application through the use of parallel collections,
+with the Scala standard libraries taking care of all the hard work.
+
+However, not everything is as nice as the above statement might suggest. As soon
+as you start to introduce side effects in the functions that are used as parameters
+for e.g. map or foreach, things start to break down. For example, we wanted to
+generate a long string representing a JSON object from a list of word counts. Where
+the elegance of the code was pretty high when using simple string concatenation with '+',
+it started to rot hard when we wanted to improve the performance of the code through
+the use of a StringBuilder: The elegant one-liner lambda function turned into an ugly
+imperative beast. It is precisely in these cases where the strain between the functional and
+the imperative worlds is highest - respectively side-effect free programming versus
+imperative programming.
+
+\subsection{Option vs Exception}
+Another example of a niceness of functional languages is the concept of Option[T].
+Where, in most imperative, object-oriented programming languages, you have to throw
+and catch exceptions, which litter through your code as soda cans on a high school playground,
+the Scala language supports the Option[T] type that takes away some of this pain.
+It is primarily useful in cases where you know that called code might behave in an
+exceptional way (and where OO code would throw an exception), but where you are not
+quite interested in that fact, but just in the result of the computation, which would
+be nothing, or some default value, in the case of failure.
+
+Scala supports this through the case class Option[T]. When a function returns an Option on T,
+it simply means that, in case of succes, it is Some T, and in case of failure, it is
+None (representing no result, nothing). In many cases, this is sufficient information
+for the caller. For example, in the scala client implementation, we used the Apache HttpClient
+library \cite{HttpClient} to connect to the server. The library would throw an exception if
+the server could not be reached. However, in our client code, we connect to the server
+to ask whether there is a job to be done. Here we are not interested in connection failures,
+but just in the question of whether a job needs to be done or not. So we let the HttpClient
+wrapper return an Option of HttpResponse, which is Some(HttpResponse) on succes, and None
+on failure. A simple pattern matching on each of these conditions in the caller method is then 
+enough to distinguish between these situations. While it is a specific solution, it does
+demonstrate the elegance of the Option[T] pattern\footnote{In Haskell, the Maybe type is the equivalent of Scala's Option}.

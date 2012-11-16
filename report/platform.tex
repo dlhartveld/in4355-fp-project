@@ -1,4 +1,28 @@
-	\subsection{Components}
-	David
+		% TODO: Short introduction
+
+\subsection{Components}
+The grid computing platform consists of a single central server that manages
+data to be computed, and a number of clients that do the actual computations.
+The server is written in Scala in an object-oriented fashion, making use of
+functional language features wherever possible and feasible. The client is
+written in Javascript (and some HTML), and runs in the browser. The server will
+push job-specific code (in Javascript) and data (in JSON) to the client.
+
+In addition to the generic client, there is also a specialized client
+implementation of the wordcount job written in Scala. This client does not
+interpret the code received from the server, but merely checks it to confirm
+that it is a wordcount job.
+	
 	\subsection{How does it work?}
-	Johan
+		The server contains a list of jobs. To request a map or reduce job, a client can navigate to /jobs. 
+		This call returns an id for the current job, that the client can execute. Using this id, 
+		the client can request the javascript code for the job with the corresponding id by calling /\{id\}/code
+		and the input data for the job with the corresponding id by calling /\{id\}/input.
+		The code for the job should contain a call to the fetch function to request data and should contain a call to the push
+		function to send the result back to the server.
+		Data can be send to the server by calling /\{id\}/output.
+		
+		In this way, the framework is very generic meaning that a variety of MapReduce algorithms can be run on the platform.
+		
+		The browser client starts to check for pending tasks when the start button is clicked and stops when the stop button is clicked.
+		When the stop button is clicked while executing a job, it will continue until the job is finished.

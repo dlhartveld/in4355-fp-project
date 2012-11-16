@@ -1,0 +1,23 @@
+A platform such as the one described in this paper is of course never
+``finished''. Even though the project that we have done is completed within the
+scope of the course Functional Programming, there is lots of room for improvement.
+We see several important opportunities for functionality extension or improvement
+of existing functionality, that would make the platform even more interesting.
+
+\subsection{Adding a partition step}
+The MapReduce approach that we currently use, is missing an important piece: the
+partition step. It would be interesting to see whether this step can be supported
+in a generic fashion, within the constraints of the platform as it is currently. 
+
+\subsection{Uploading new jobs}
+Jobs are currently hard-coded in the system. It is not possible to dynamically
+add additional jobs while running the server. This is of course an important
+feature that is missing.
+
+\subsection{Write job code in language other than js}
+Jobs can be defined in javascript. But this probably isn't the most ideal
+approach to this problem. It might be interesting to explore the possibilities
+of using other languages for this purpose. It might even be interesting to see
+whether the use of a simple DSL would fit this situation. Would the DSL be
+compiled to some intermediate form on the server? Or would the clients interpret
+it themselves? There is probably a lot of interesting stuff possible here. 
